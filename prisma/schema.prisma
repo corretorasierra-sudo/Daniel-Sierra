@@ -1,0 +1,321 @@
+// Prisma schema — CRM Cartão de Todos Guarabira
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum Role {
+  ADMIN
+  GERENTE
+  COORDENADOR
+  VENDEDOR
+}
+
+enum EtapaLead {
+  NOVO
+  EM_TRATATIVA
+  FECHAMENTO
+  PERDIDO
+}
+
+enum TipoAtividade {
+  LIGACAO
+  MENSAGEM
+  WHATSAPP
+  RETORNO_AGENDADO
+  PRESENCIAL
+  OBSERVACAO
+}
+
+enum TipoMeta {
+  MENSAL
+  SEMANAL
+  DIARIA
+}
+
+enum StatusImportacao {
+  PROCESSANDO
+  CONCLUIDA
+  CONCLUIDA_COM_PENDENCIAS
+  ERRO
+}
+
+enum StatusVenda {
+  ATIVA
+  CANCELADA
+}
+
+enum TipoProspeccao {
+  FILIACAO
+  REFILIACAO
+}
+
+enum StatusPendencia {
+  PENDENTE
+  RESOLVIDA
+}
+
+enum MotivoPendencia {
+  VENDEDOR_NAO_ENCONTRADO
+  DADOS_AUSENTES
+  DUPLICADO_AMBIGUO
+  OUTRO
+}
+
+// ---------------------------------------------------------------------------
+// Usuários / vendedores
+// ---------------------------------------------------------------------------
+
+model User {
+  id        String   @id @default(cuid())
+  nome      String
+  email     String   @unique
+  senhaHash String
+  role      Role
+  fotoUrl   String?
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vendedor Vendedor?
+
+  importacoesVenda      ImportacaoVenda[]
+  importacoesLead       ImportacaoLead[]
+  pendenciasResolvidas  PendenciaImportacao[] @relation("PendenciaResolvidaPor")
+  historicoEtapaLead    HistoricoEtapaLead[]
+
+  @@map("users")
+}
+
+model Vendedor {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  nomeCompleto  String
+  telefone      String?
+  ativo         Boolean  @default(true)
+  /** Canal de venda (ex: site) cadastrado como vendedor só pra vincular vendas — não é uma pessoa.
+   *  Fica de fora de ranking, meta da unidade e afins; só gestor/coordenador enxergam essas vendas. */
+  virtual       Boolean  @default(false)
+  coordenadorId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  metas                  Meta[]
+  vendas                  Venda[]
+  leads                    Lead[]
+  atividades               Atividade[]
+  aliases                  VendedorAliasVenda[]
+  pendenciasCorrigidas     PendenciaImportacao[] @relation("PendenciaVendedorCorrigido")
+
+  @@index([nomeCompleto])
+  @@map("vendedores")
+}
+
+// ---------------------------------------------------------------------------
+// Metas
+// ---------------------------------------------------------------------------
+
+model Meta {
+  id         String   @id @default(cuid())
+  vendedorId String? // null = meta da unidade
+  vendedor   Vendedor? @relation(fields: [vendedorId], references: [id], onDelete: Cascade)
+  tipo       TipoMeta
+  valorMeta  Int // quantidade de vendas
+  dataInicio DateTime
+  dataFim    DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([vendedorId, dataInicio, dataFim])
+  @@map("metas")
+}
+
+// ---------------------------------------------------------------------------
+// Vendas (somente via importação)
+// ---------------------------------------------------------------------------
+
+model Venda {
+  id                  String      @id @default(cuid())
+  clienteNome         String
+  clienteTelefone     String?
+  vendedorId          String
+  vendedor            Vendedor    @relation(fields: [vendedorId], references: [id], onDelete: Restrict)
+  dataVenda           DateTime
+  produto             String?
+  valor               Decimal?    @db.Decimal(12, 2)
+  tipoProspeccao      TipoProspeccao @default(FILIACAO)
+  status              StatusVenda @default(ATIVA)
+  codigoExterno       String?     @unique
+  chaveDedupe         String?     @unique // usada quando não há codigoExterno
+  origemImportacaoId  String?
+  origemImportacao    ImportacaoVenda? @relation(fields: [origemImportacaoId], references: [id])
+  leadId              String?
+  lead                Lead?       @relation(fields: [leadId], references: [id])
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+
+  acompanhamento AcompanhamentoPosVenda?
+
+  @@index([vendedorId, dataVenda])
+  @@map("vendas")
+}
+
+model ImportacaoVenda {
+  id              String            @id @default(cuid())
+  arquivoNome     String
+  importadoPorId  String
+  importadoPor    User              @relation(fields: [importadoPorId], references: [id])
+  status          StatusImportacao  @default(PROCESSANDO)
+  totalLidos      Int               @default(0)
+  totalInseridos  Int               @default(0)
+  totalDuplicados Int               @default(0)
+  totalErros      Int               @default(0)
+  createdAt       DateTime          @default(now())
+
+  vendas      Venda[]
+  pendencias  PendenciaImportacao[]
+
+  @@map("importacoes_venda")
+}
+
+model PendenciaImportacao {
+  id                  String           @id @default(cuid())
+  importacaoId        String
+  importacao          ImportacaoVenda  @relation(fields: [importacaoId], references: [id], onDelete: Cascade)
+  linhaOriginal       Json
+  motivo              MotivoPendencia
+  nomePlanilha        String?
+  status              StatusPendencia  @default(PENDENTE)
+  resolvidoPorId       String?
+  resolvidoPor         User?           @relation("PendenciaResolvidaPor", fields: [resolvidoPorId], references: [id])
+  vendedorCorrigidoId  String?
+  vendedorCorrigido    Vendedor?       @relation("PendenciaVendedorCorrigido", fields: [vendedorCorrigidoId], references: [id])
+  createdAt            DateTime        @default(now())
+  resolvidoEm          DateTime?
+
+  @@map("pendencias_importacao")
+}
+
+model VendedorAliasVenda {
+  id           String   @id @default(cuid())
+  nomePlanilha String   @unique
+  vendedorId   String
+  vendedor     Vendedor @relation(fields: [vendedorId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+
+  @@map("vendedor_alias_venda")
+}
+
+// ---------------------------------------------------------------------------
+// Leads (funil pré-venda)
+// ---------------------------------------------------------------------------
+
+model Lead {
+  id                 String    @id @default(cuid())
+  nome               String
+  telefone           String    @unique
+  cidade             String?
+  origem             String?
+  vendedorId         String?
+  vendedor           Vendedor? @relation(fields: [vendedorId], references: [id])
+  etapa              EtapaLead @default(NOVO)
+  observacoes        String?
+  dataEntrada        DateTime  @default(now())
+  dataUltimoContato   DateTime?
+  proximaAcao        String?
+  proximaAcaoData    DateTime?
+  indicadoPor        String?
+  origemImportacaoId String?
+  origemImportacao   ImportacaoLead? @relation(fields: [origemImportacaoId], references: [id])
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  historicoEtapas HistoricoEtapaLead[]
+  atividades      Atividade[]
+  vendas          Venda[]
+
+  @@index([vendedorId, etapa])
+  @@map("leads")
+}
+
+model HistoricoEtapaLead {
+  id            String    @id @default(cuid())
+  leadId        String
+  lead          Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  etapaAnterior EtapaLead?
+  etapaNova     EtapaLead
+  dataHora      DateTime  @default(now())
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id])
+
+  @@map("historico_etapa_lead")
+}
+
+model Atividade {
+  id           String        @id @default(cuid())
+  leadId       String
+  lead         Lead          @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  vendedorId   String
+  vendedor     Vendedor      @relation(fields: [vendedorId], references: [id])
+  tipo         TipoAtividade
+  dataHora     DateTime      @default(now())
+  resultado    String?
+  observacao   String?
+  proximaAcao  String?
+  proximaAcaoData DateTime?
+  createdAt    DateTime      @default(now())
+
+  @@index([leadId])
+  @@index([vendedorId, dataHora])
+  @@map("atividades")
+}
+
+model ImportacaoLead {
+  id              String            @id @default(cuid())
+  arquivoNome     String
+  importadoPorId  String
+  importadoPor    User              @relation(fields: [importadoPorId], references: [id])
+  status          StatusImportacao  @default(PROCESSANDO)
+  totalLidos      Int               @default(0)
+  totalInseridos  Int               @default(0)
+  totalDuplicados Int               @default(0)
+  totalErros      Int               @default(0)
+  createdAt       DateTime          @default(now())
+
+  leads Lead[]
+
+  @@map("importacoes_lead")
+}
+
+// ---------------------------------------------------------------------------
+// Pós-venda
+// ---------------------------------------------------------------------------
+
+model AcompanhamentoPosVenda {
+  id                          String    @id @default(cuid())
+  vendaId                     String    @unique
+  venda                       Venda     @relation(fields: [vendaId], references: [id], onDelete: Cascade)
+  appBaixado                  Boolean   @default(false)
+  consultaMarcada             Boolean   @default(false)
+  orientacoesRecebidas        Boolean   @default(false)
+  indicacaoRecebida           Boolean   @default(false)
+  observacoes                 String?
+  pendencias                  String?
+  dataUltimoAcompanhamento    DateTime?
+  proximaAcao                 String?
+  proximaAcaoData             DateTime?
+  createdAt                   DateTime  @default(now())
+  updatedAt                   DateTime  @updatedAt
+
+  @@map("acompanhamento_pos_venda")
+}

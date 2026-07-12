@@ -1,0 +1,41 @@
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { LeadsBoard } from "./LeadsBoard";
+import { NovoLeadDialog } from "./NovoLeadDialog";
+import { ImportarLeadsDialog } from "./ImportarLeadsDialog";
+import { PageHeader } from "@/components/dashboard/PageHeader";
+
+export default async function LeadsPage() {
+  const session = await auth();
+  const vendedorId = session?.user.vendedorId;
+
+  if (!vendedorId) {
+    return (
+      <p className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-500">
+        Esta conta não está vinculada a um vendedor.
+      </p>
+    );
+  }
+
+  const leads = await prisma.lead.findMany({
+    where: { vendedorId },
+    orderBy: { dataEntrada: "desc" },
+  });
+
+  return (
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        titulo="Meus leads"
+        subtitulo="Clique num lead pra registrar contato e mover de etapa."
+        action={
+          <div className="flex gap-2">
+            <ImportarLeadsDialog />
+            <NovoLeadDialog />
+          </div>
+        }
+      />
+
+      <LeadsBoard leads={leads} />
+    </div>
+  );
+}
