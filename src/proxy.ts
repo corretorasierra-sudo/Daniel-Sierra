@@ -8,7 +8,7 @@ import type { Role } from "@prisma/client";
 // Protege rotas por papel:
 //   /admin/**       -> ADMIN
 //   /gerente/**     -> GERENTE + ADMIN
-//   /coordenador/** -> COORDENADOR + ADMIN
+//   /coordenador/** -> COORDENADOR + ADMIN + GERENTE
 //   /vendedor/**    -> VENDEDOR + ADMIN
 //
 // Esta é uma checagem otimista (lê só o JWT do cookie). Toda Server Action e
@@ -18,7 +18,7 @@ import type { Role } from "@prisma/client";
 const REGRAS_POR_PREFIXO: { prefixo: string; permitido: Role[] }[] = [
   { prefixo: "/admin", permitido: ["ADMIN"] },
   { prefixo: "/gerente", permitido: ["ADMIN", "GERENTE"] },
-  { prefixo: "/coordenador", permitido: ["ADMIN", "COORDENADOR"] },
+  { prefixo: "/coordenador", permitido: ["ADMIN", "COORDENADOR", "GERENTE"] },
   { prefixo: "/vendedor", permitido: ["ADMIN", "VENDEDOR"] },
   { prefixo: "/metas", permitido: ["ADMIN", "GERENTE"] },
 ];

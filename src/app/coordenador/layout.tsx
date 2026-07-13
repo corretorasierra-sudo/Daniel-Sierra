@@ -8,7 +8,7 @@ import {
 } from "@/lib/notificacoes";
 
 export default async function CoordenadorLayout({ children }: { children: React.ReactNode }) {
-  const session = await exigirRole("ADMIN", "COORDENADOR");
+  const session = await exigirRole("ADMIN", "COORDENADOR", "GERENTE");
 
   const [pendenciasImportacao, pendenciasPosVenda, pendenciasSite] = await Promise.all([
     contarPendenciasImportacao(),

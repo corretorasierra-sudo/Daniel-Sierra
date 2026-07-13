@@ -23,7 +23,7 @@ export async function importarVendas(
   _estado: ResultadoImportacaoVendas | undefined,
   formData: FormData
 ): Promise<ResultadoImportacaoVendas> {
-  const session = await exigirRole("ADMIN", "COORDENADOR");
+  const session = await exigirRole("ADMIN", "COORDENADOR", "GERENTE");
 
   const arquivo = formData.get("arquivo");
   if (!(arquivo instanceof File) || arquivo.size === 0) {
@@ -146,6 +146,7 @@ export async function importarVendas(
     },
   });
 
+  revalidatePath("/coordenador");
   revalidatePath("/coordenador/importar-vendas");
   revalidatePath("/coordenador/pendencias");
   revalidatePath("/vendedor");

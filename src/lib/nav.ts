@@ -28,10 +28,12 @@ export function navLinksParaRole(role: Role): SidebarLink[] {
         { href: "/gerente", label: "Início", icon: "LayoutDashboard" },
         { href: "/gerente/relatorios", label: "Relatórios", icon: "BarChart3" },
         { href: "/metas", label: "Metas", icon: "Target" },
+        { href: "/coordenador/importar-vendas", label: "Importar vendas", icon: "UploadCloud" },
         { href: "/gerente/vendas-site", label: "Vendas do site", icon: "Globe" },
       ];
     case "COORDENADOR":
       return [
+        { href: "/coordenador", label: "Início", icon: "LayoutDashboard" },
         { href: "/coordenador/importar-leads", label: "Importar leads", icon: "FileSpreadsheet" },
         { href: "/coordenador/importar-vendas", label: "Importar vendas", icon: "UploadCloud" },
         { href: "/coordenador/pendencias", label: "Pendências", icon: "AlertTriangle" },
