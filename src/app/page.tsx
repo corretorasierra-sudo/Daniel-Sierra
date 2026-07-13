@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 
 const DESTINO_POR_ROLE: Record<string, string> = {
-  ADMIN: "/admin/vendedores",
+  ADMIN: "/gerente",
   GERENTE: "/gerente",
   COORDENADOR: "/coordenador/importar-vendas",
   VENDEDOR: "/vendedor",
