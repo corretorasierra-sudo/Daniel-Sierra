@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 const DESTINO_POR_ROLE: Record<string, string> = {
   ADMIN: "/gerente",
   GERENTE: "/gerente",
-  COORDENADOR: "/coordenador/importar-vendas",
+  COORDENADOR: "/coordenador",
   VENDEDOR: "/vendedor",
 };
 
