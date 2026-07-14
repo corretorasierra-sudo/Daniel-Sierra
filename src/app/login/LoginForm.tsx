@@ -18,7 +18,7 @@ type DadosLogin = {
 
 const iconsArray: OrbitIcon[] = [
   {
-    component: () => <OrbitLogo src="/logo-cartao-de-todos.png" alt="Cartão de Todos" className="size-[46px]" />,
+    component: () => <OrbitLogo src="/logo-cartao-de-todos.png" alt="Cartão de Todos" className="size-[46px]" padding="p-1" />,
     className: "border-none bg-transparent shadow-none",
     duration: 18,
     delay: 0,
@@ -26,7 +26,7 @@ const iconsArray: OrbitIcon[] = [
     reverse: false,
   },
   {
-    component: () => <OrbitLogo src="/icone-whatsapp.avif" alt="WhatsApp" className="size-[46px]" />,
+    component: () => <OrbitLogo src="/icone-whatsapp.avif" alt="WhatsApp" className="size-[46px]" padding="p-1.5" />,
     className: "border-none bg-transparent shadow-none",
     duration: 18,
     delay: 9,
@@ -35,7 +35,7 @@ const iconsArray: OrbitIcon[] = [
   },
   {
     component: () => (
-      <OrbitLogo src="/logo-cartao-de-todos-guarabira.png" alt="Cartão de Todos Guarabira" className="size-[46px]" />
+      <OrbitLogo src="/logo-cartao-de-todos-guarabira.jpg" alt="Cartão de Todos Guarabira" className="size-[46px]" />
     ),
     className: "border-none bg-transparent shadow-none",
     duration: 24,
@@ -63,7 +63,7 @@ const iconsArray: OrbitIcon[] = [
   },
   {
     component: () => (
-      <OrbitLogo src="/promo-green-friday.png" alt="Promoção Green Friday" className="size-[46px]" />
+      <OrbitLogo src="/promo-green-friday.jpg" alt="Promoção Green Friday" className="size-[46px]" />
     ),
     className: "border-none bg-transparent shadow-none",
     duration: 22,
@@ -138,10 +138,8 @@ export function LoginForm() {
   };
 
   return (
-    <section className="flex min-h-screen bg-[#0A9B86] max-lg:justify-center">
-      <span
-        className="relative hidden h-screen w-1/2 flex-col items-center justify-center bg-[url(/login-bg.png)] bg-center bg-no-repeat lg:flex"
-      >
+    <section className="flex min-h-screen bg-[radial-gradient(circle_at_top,_#123f3b,_#0b2e2c_60%)] max-lg:justify-center">
+      <span className="relative hidden h-screen w-1/2 flex-col items-center justify-center lg:flex">
         <Ripple mainCircleSize={100} />
         <TechOrbitDisplay iconsArray={iconsArray} />
       </span>
