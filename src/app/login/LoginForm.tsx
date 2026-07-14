@@ -7,9 +7,7 @@ import {
   Ripple,
   AuthTabs,
   TechOrbitDisplay,
-  CartaoDeTodosIcon,
-  AmorSaudeIcon,
-  CartaoDeTodosGuarabiraIcon,
+  OrbitLogo,
   type OrbitIcon,
 } from "@/components/blocks/modern-animated-sign-in";
 
@@ -20,7 +18,7 @@ type DadosLogin = {
 
 const iconsArray: OrbitIcon[] = [
   {
-    component: () => <CartaoDeTodosIcon className="size-[46px]" />,
+    component: () => <OrbitLogo src="/logo-cartao-de-todos.png" alt="Cartão de Todos" className="size-[46px]" padding="p-1" />,
     className: "border-none bg-transparent shadow-none",
     duration: 18,
     delay: 0,
@@ -28,18 +26,48 @@ const iconsArray: OrbitIcon[] = [
     reverse: false,
   },
   {
-    component: () => <CartaoDeTodosGuarabiraIcon className="size-[46px]" />,
+    component: () => <OrbitLogo src="/icone-whatsapp.avif" alt="WhatsApp" className="size-[46px]" padding="p-1.5" />,
+    className: "border-none bg-transparent shadow-none",
+    duration: 18,
+    delay: 9,
+    radius: 90,
+    reverse: false,
+  },
+  {
+    component: () => (
+      <OrbitLogo src="/logo-cartao-de-todos-guarabira.jpg" alt="Cartão de Todos Guarabira" className="size-[46px]" />
+    ),
     className: "border-none bg-transparent shadow-none",
     duration: 24,
-    delay: 8,
+    delay: 0,
     radius: 170,
     reverse: true,
   },
   {
-    component: () => <AmorSaudeIcon className="size-[46px]" />,
+    component: () => (
+      <OrbitLogo src="/logo-cartao-de-todos-sonhos.png" alt="Cartão de Todos Sonhos" className="size-[46px]" />
+    ),
+    className: "border-none bg-transparent shadow-none",
+    duration: 24,
+    delay: 12,
+    radius: 170,
+    reverse: true,
+  },
+  {
+    component: () => <OrbitLogo src="/logo-amor-saude.png" alt="Amor Saúde" className="size-[46px]" />,
     className: "border-none bg-transparent shadow-none",
     duration: 22,
-    delay: 4,
+    delay: 0,
+    radius: 250,
+    reverse: false,
+  },
+  {
+    component: () => (
+      <OrbitLogo src="/promo-green-friday.jpg" alt="Promoção Green Friday" className="size-[46px]" />
+    ),
+    className: "border-none bg-transparent shadow-none",
+    duration: 22,
+    delay: 11,
     radius: 250,
     reverse: false,
   },
