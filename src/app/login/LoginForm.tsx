@@ -7,9 +7,9 @@ import {
   Ripple,
   AuthTabs,
   TechOrbitDisplay,
-  WhatsAppIcon,
   CartaoDeTodosIcon,
   AmorSaudeIcon,
+  CartaoDeTodosGuarabiraIcon,
   type OrbitIcon,
 } from "@/components/blocks/modern-animated-sign-in";
 
@@ -20,7 +20,7 @@ type DadosLogin = {
 
 const iconsArray: OrbitIcon[] = [
   {
-    component: () => <WhatsAppIcon className="size-[34px]" />,
+    component: () => <CartaoDeTodosIcon className="size-[46px]" />,
     className: "border-none bg-transparent shadow-none",
     duration: 18,
     delay: 0,
@@ -28,7 +28,7 @@ const iconsArray: OrbitIcon[] = [
     reverse: false,
   },
   {
-    component: () => <CartaoDeTodosIcon className="size-[46px] text-sm" />,
+    component: () => <CartaoDeTodosGuarabiraIcon className="size-[46px]" />,
     className: "border-none bg-transparent shadow-none",
     duration: 24,
     delay: 8,
