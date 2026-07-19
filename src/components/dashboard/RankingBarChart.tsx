@@ -24,7 +24,7 @@ export function RankingBarChart({ dados }: { dados: ItemRankingChart[] }) {
 
   if (dados.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed border-slate-200 px-4 py-8 text-center text-sm text-slate-400">
+      <p className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
         Sem dados pra exibir ainda.
       </p>
     );
@@ -75,10 +75,10 @@ export function RankingBarChart({ dados }: { dados: ItemRankingChart[] }) {
               key={index}
               fill={
                 item.meta > 0 && item.percentual >= 100
-                  ? "#84cc16"
+                  ? "var(--chart-1)"
                   : item.meta > 0 && item.percentual < 50
-                    ? "#f59e0b"
-                    : "#0f3d3d"
+                    ? "var(--chart-4)"
+                    : "var(--chart-2)"
               }
             />
           ))}

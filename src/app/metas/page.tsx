@@ -20,7 +20,7 @@ function formatarData(data: Date) {
 }
 
 const selectClass =
-  "rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm shadow-sm outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20";
+  "rounded-lg border border-border bg-card px-2.5 py-1.5 text-sm shadow-sm outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20";
 
 export default async function MetasPage() {
   await exigirRole("ADMIN", "GERENTE");
@@ -44,13 +44,13 @@ export default async function MetasPage() {
       />
 
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <Card className="border-slate-200/80 shadow-sm">
+        <Card className="border-border/80 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-sm text-slate-700">Meta dos vendedores</CardTitle>
+            <CardTitle className="text-sm text-foreground/80">Meta dos vendedores</CardTitle>
           </CardHeader>
           <CardContent>
             <form action={definirMetaVendedores} className="flex flex-col gap-3">
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 Aplica a mesma meta a todos os {vendedores.length} vendedores ativos, no mês e
                 na semana atuais. Se já existir uma meta pro período, ela é atualizada.
               </p>
@@ -85,13 +85,13 @@ export default async function MetasPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200/80 shadow-sm">
+        <Card className="border-border/80 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-sm text-slate-700">Meta da franquia</CardTitle>
+            <CardTitle className="text-sm text-foreground/80">Meta da franquia</CardTitle>
           </CardHeader>
           <CardContent>
             <form action={definirMetaFranquia} className="flex flex-col gap-3">
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 Meta da unidade inteira, no mês e na semana atuais. O realizado é sempre a soma
                 das vendas de todos os vendedores no período.
               </p>
@@ -127,9 +127,9 @@ export default async function MetasPage() {
         </Card>
       </section>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-sm text-slate-700">Nova meta (individual ou personalizada)</CardTitle>
+          <CardTitle className="text-sm text-foreground/80">Nova meta (individual ou personalizada)</CardTitle>
         </CardHeader>
         <CardContent>
           <form action={criarMeta} className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
@@ -173,7 +173,7 @@ export default async function MetasPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardContent>
           <Table>
             <TableHeader>
@@ -188,7 +188,7 @@ export default async function MetasPage() {
             <TableBody>
               {metas.map((meta) => (
                 <TableRow key={meta.id}>
-                  <TableCell className="font-medium text-slate-900">
+                  <TableCell className="font-medium text-foreground">
                     {meta.vendedor?.nomeCompleto ?? "Unidade"}
                   </TableCell>
                   <TableCell>{meta.tipo}</TableCell>
@@ -211,7 +211,7 @@ export default async function MetasPage() {
               ))}
               {metas.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="py-6 text-center text-slate-400">
+                  <TableCell colSpan={5} className="py-6 text-center text-muted-foreground">
                     Nenhuma meta cadastrada ainda.
                   </TableCell>
                 </TableRow>

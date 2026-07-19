@@ -12,6 +12,7 @@ import {
   FileSpreadsheet,
   AlertTriangle,
   Globe,
+  Megaphone,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,7 @@ const ICON_MAP = {
   FileSpreadsheet,
   AlertTriangle,
   Globe,
+  Megaphone,
 } satisfies Record<string, LucideIcon>;
 
 export type IconeNome = keyof typeof ICON_MAP;
@@ -71,8 +73,8 @@ export function SidebarNav({
                   ? "bg-[var(--sidebar-primary)] text-[var(--sidebar-primary-foreground)]"
                   : "text-[var(--sidebar-foreground)]/80 hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-foreground)]"
                 : ativo
-                  ? "bg-lime-100 text-lime-800"
-                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
             )}
           >
             {Icon && <Icon className="size-4 shrink-0" />}

@@ -97,9 +97,9 @@ export default async function CoordenadorHomePage() {
       />
 
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-        <Card className="border-slate-200/80 shadow-sm lg:col-span-1">
+        <Card className="border-border/80 shadow-sm lg:col-span-1">
           <CardHeader>
-            <CardTitle className="text-sm text-slate-600">Meta da unidade</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">Meta da unidade</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-2">
             <ProgressRing
@@ -108,7 +108,7 @@ export default async function CoordenadorHomePage() {
               espessura={12}
               label={`${progressoUnidade.realizado}/${progressoUnidade.meta || "—"}`}
             />
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
               {metaUnidade ? "vendas no período" : "meta não definida"}
             </p>
           </CardContent>
@@ -138,10 +138,10 @@ export default async function CoordenadorHomePage() {
         </div>
       </section>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-sm text-slate-700">
-            <Target className="size-4 text-slate-400" />
+          <CardTitle className="flex items-center gap-2 text-sm text-foreground/80">
+            <Target className="size-4 text-muted-foreground" />
             Ranking do mês
           </CardTitle>
         </CardHeader>
@@ -168,7 +168,7 @@ export default async function CoordenadorHomePage() {
               {ranking.map((r) => (
                 <TableRow key={r.vendedorId}>
                   <TableCell>{r.posicao}</TableCell>
-                  <TableCell className="font-medium text-slate-900">{r.nome}</TableCell>
+                  <TableCell className="font-medium text-foreground">{r.nome}</TableCell>
                   <TableCell>{r.realizado}</TableCell>
                   <TableCell>{r.meta || "—"}</TableCell>
                   <TableCell>{r.meta > 0 ? `${r.percentual.toFixed(0)}%` : "—"}</TableCell>
@@ -179,9 +179,9 @@ export default async function CoordenadorHomePage() {
         </CardContent>
       </Card>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-sm text-slate-700">Últimas vendas</CardTitle>
+          <CardTitle className="text-sm text-foreground/80">Últimas vendas</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -197,7 +197,7 @@ export default async function CoordenadorHomePage() {
             <TableBody>
               {vendasRecentes.map((venda) => (
                 <TableRow key={venda.id}>
-                  <TableCell className="font-medium text-slate-900">{venda.clienteNome}</TableCell>
+                  <TableCell className="font-medium text-foreground">{venda.clienteNome}</TableCell>
                   <TableCell>{venda.vendedor.nomeCompleto}</TableCell>
                   <TableCell>{venda.produto ?? "—"}</TableCell>
                   <TableCell>{venda.valor ? formatarMoeda(Number(venda.valor)) : "—"}</TableCell>
@@ -206,7 +206,7 @@ export default async function CoordenadorHomePage() {
               ))}
               {vendasRecentes.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="py-6 text-center text-slate-400">
+                  <TableCell colSpan={5} className="py-6 text-center text-muted-foreground">
                     Nenhuma venda registrada ainda.
                   </TableCell>
                 </TableRow>

@@ -24,7 +24,7 @@ const TIPOS_ATIVIDADE = [
 ] as const;
 
 const inputClass =
-  "w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm shadow-sm outline-none transition-colors focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20";
+  "w-full rounded-lg border border-border bg-card px-2.5 py-1.5 text-sm shadow-sm outline-none transition-colors focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20";
 
 export type LeadResumo = {
   id: string;
@@ -51,7 +51,7 @@ export function LeadCard({
   arrastavel?: boolean;
 }) {
   return (
-    <details className="group rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow open:shadow-md">
+    <details className="group rounded-xl border border-border bg-card shadow-sm transition-shadow open:shadow-md">
       <summary
         draggable={arrastavel}
         onDragStart={
@@ -66,8 +66,8 @@ export function LeadCard({
       >
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
-            <p className="truncate text-sm font-medium text-slate-900">{lead.nome}</p>
-            <p className="mt-0.5 flex items-center gap-2 text-xs text-slate-500">
+            <p className="truncate text-sm font-medium text-foreground">{lead.nome}</p>
+            <p className="mt-0.5 flex items-center gap-2 text-xs text-muted-foreground">
               <span className="flex items-center gap-1">
                 <Phone className="size-3" />
                 {lead.telefone}
@@ -87,18 +87,21 @@ export function LeadCard({
               </Badge>
             )}
             {lead.proximaAcao && (
-              <Badge variant="outline" className="border-sky-200 bg-sky-50 text-sky-700">
+              <Badge
+                variant="outline"
+                className="border-sky-200 bg-sky-50 text-sky-700 dark:border-sky-500/30 dark:bg-sky-500/10 dark:text-sky-300"
+              >
                 {lead.proximaAcao}
               </Badge>
             )}
-            <ChevronDown className="size-4 text-slate-400 transition-transform group-open:rotate-180" />
+            <ChevronDown className="size-4 text-muted-foreground transition-transform group-open:rotate-180" />
           </div>
         </div>
       </summary>
 
       <form
         action={registrarAtividade}
-        className="flex flex-col gap-2 border-t border-slate-100 px-4 py-3"
+        className="flex flex-col gap-2 border-t border-border px-4 py-3"
       >
         <input type="hidden" name="leadId" value={lead.id} />
 

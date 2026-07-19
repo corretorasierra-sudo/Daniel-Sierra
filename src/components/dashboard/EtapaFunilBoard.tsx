@@ -13,27 +13,27 @@ const ETAPA_COR: Record<string, EtapaCorTom> = {
 };
 
 const TOM_COLUNA: Record<EtapaCorTom, string> = {
-  neutro: "border-slate-300 bg-slate-100",
-  info: "border-sky-300 bg-sky-100",
-  alerta: "border-amber-300 bg-amber-100",
-  sucesso: "border-lime-300 bg-lime-100",
-  risco: "border-red-300 bg-red-100",
+  neutro: "border-border bg-muted",
+  info: "border-sky-300 bg-sky-100 dark:border-sky-500/30 dark:bg-sky-500/10",
+  alerta: "border-amber-300 bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10",
+  sucesso: "border-lime-300 bg-lime-100 dark:border-lime-500/30 dark:bg-lime-500/10",
+  risco: "border-red-300 bg-red-100 dark:border-red-500/30 dark:bg-red-500/10",
 };
 
 const TOM_TITULO: Record<EtapaCorTom, string> = {
-  neutro: "text-slate-800",
-  info: "text-sky-900",
-  alerta: "text-amber-900",
-  sucesso: "text-lime-900",
-  risco: "text-red-900",
+  neutro: "text-foreground",
+  info: "text-sky-900 dark:text-sky-300",
+  alerta: "text-amber-900 dark:text-amber-300",
+  sucesso: "text-lime-900 dark:text-lime-300",
+  risco: "text-red-900 dark:text-red-300",
 };
 
 const TOM_BADGE: Record<EtapaCorTom, string> = {
-  neutro: "bg-slate-200 text-slate-700",
-  info: "bg-sky-200 text-sky-800",
-  alerta: "bg-amber-200 text-amber-800",
-  sucesso: "bg-lime-200 text-lime-800",
-  risco: "bg-red-200 text-red-800",
+  neutro: "bg-muted text-foreground/80",
+  info: "bg-sky-200 text-sky-800 dark:bg-sky-500/20 dark:text-sky-300",
+  alerta: "bg-amber-200 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300",
+  sucesso: "bg-lime-200 text-lime-800 dark:bg-lime-500/20 dark:text-lime-300",
+  risco: "bg-red-200 text-red-800 dark:bg-red-500/20 dark:text-red-300",
 };
 
 export function corEtapa(etapa: string): EtapaCorTom {
@@ -87,7 +87,7 @@ export function EtapaFunilColuna({
       className={cn(
         "flex h-full flex-col gap-3 rounded-xl border-2 p-3 transition-colors",
         TOM_COLUNA[tom],
-        arrastandoSobre && "ring-2 ring-offset-1 ring-slate-900/30"
+        arrastandoSobre && "ring-2 ring-offset-1 ring-foreground/30"
       )}
     >
       <h2 className={cn("flex items-center justify-between text-sm font-bold", TOM_TITULO[tom])}>

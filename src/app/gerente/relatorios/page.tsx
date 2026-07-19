@@ -115,7 +115,7 @@ export default async function RelatoriosPage({
     <div className="flex flex-col gap-6">
       <PageHeader titulo="Relatórios" subtitulo="Vendas, leads e produtividade por período." />
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardContent>
           <form method="get" className="flex flex-wrap items-end gap-3">
             <div className="flex flex-col gap-1.5">
@@ -133,9 +133,9 @@ export default async function RelatoriosPage({
         </CardContent>
       </Card>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-sm text-slate-700">
+          <CardTitle className="text-sm text-foreground/80">
             Vendas por vendedor no período (ranking)
           </CardTitle>
         </CardHeader>
@@ -151,25 +151,25 @@ export default async function RelatoriosPage({
         </CardContent>
       </Card>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-sm text-slate-700">Leads por etapa (total geral)</CardTitle>
+          <CardTitle className="text-sm text-foreground/80">Leads por etapa (total geral)</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {leadsPorEtapa.map((g) => (
-              <div key={g.etapa} className="rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-center">
-                <p className="text-lg font-semibold text-slate-900">{g._count._all}</p>
-                <p className="text-xs text-slate-500">{ETAPA_LABEL[g.etapa]}</p>
+              <div key={g.etapa} className="rounded-lg border border-border bg-muted/60 p-3 text-center">
+                <p className="text-lg font-semibold text-foreground">{g._count._all}</p>
+                <p className="text-xs text-muted-foreground">{ETAPA_LABEL[g.etapa]}</p>
               </div>
             ))}
           </div>
         </CardContent>
       </Card>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-sm text-slate-700">
+          <CardTitle className="text-sm text-foreground/80">
             Produtividade e conversão por vendedor
           </CardTitle>
         </CardHeader>
@@ -192,7 +192,7 @@ export default async function RelatoriosPage({
                 const conversao = totalLeads > 0 ? (fechados / totalLeads) * 100 : 0;
                 return (
                   <TableRow key={v.id}>
-                    <TableCell className="font-medium text-slate-900">{v.nomeCompleto}</TableCell>
+                    <TableCell className="font-medium text-foreground">{v.nomeCompleto}</TableCell>
                     {(Object.keys(TIPO_LABEL) as TipoAtividade[]).map((tipo) => (
                       <TableCell key={tipo}>{atividades?.get(tipo) ?? 0}</TableCell>
                     ))}

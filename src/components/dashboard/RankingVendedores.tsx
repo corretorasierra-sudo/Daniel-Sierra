@@ -28,7 +28,7 @@ export function RankingVendedores({
 }) {
   if (itens.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed border-slate-200 px-4 py-8 text-center text-sm text-slate-400">
+      <p className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
         Sem vendas no mês ainda.
       </p>
     );
@@ -42,14 +42,14 @@ export function RankingVendedores({
           className={cn(
             "flex items-center gap-3 rounded-lg border px-3 py-2",
             item.vendedorId === vendedorAtualId
-              ? "border-lime-300 bg-lime-50/60"
-              : "border-slate-100 bg-slate-50/40"
+              ? "border-lime-300 bg-lime-50/60 dark:border-lime-500/30 dark:bg-lime-500/10"
+              : "border-border bg-muted/40"
           )}
         >
           <span className="w-5 shrink-0 text-center text-sm">
             {MEDALHA[index] ?? index + 1}
           </span>
-          <div className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-200 text-xs font-semibold text-slate-600">
+          <div className="flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-xs font-semibold text-muted-foreground">
             {item.fotoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={item.fotoUrl} alt={item.nome} className="size-full object-cover" />
@@ -57,8 +57,8 @@ export function RankingVendedores({
               iniciaisDe(item.nome) || "?"
             )}
           </div>
-          <span className="flex-1 truncate text-sm font-medium text-slate-800">{item.nome}</span>
-          <span className="text-sm font-semibold text-slate-900">{item.vendas}</span>
+          <span className="flex-1 truncate text-sm font-medium text-foreground/90">{item.nome}</span>
+          <span className="text-sm font-semibold text-foreground">{item.vendas}</span>
         </li>
       ))}
     </ul>

@@ -56,11 +56,11 @@ export function ProgressRing({
         />
       </RadialBarChart>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="text-2xl font-bold text-slate-900">
+        <span className="text-2xl font-bold text-foreground">
           {percentual.toFixed(0)}%
         </span>
-        {label && <span className="text-xs font-medium text-slate-500">{label}</span>}
-        {sublabel && <span className="text-[11px] text-slate-400">{sublabel}</span>}
+        {label && <span className="text-xs font-medium text-muted-foreground">{label}</span>}
+        {sublabel && <span className="text-[11px] text-muted-foreground/70">{sublabel}</span>}
       </div>
     </div>
   );

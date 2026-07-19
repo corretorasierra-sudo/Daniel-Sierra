@@ -45,7 +45,7 @@ export default async function PendenciasPage() {
 
       <section className="flex flex-col gap-3">
         {pendentes.length === 0 && (
-          <p className="rounded-lg border border-slate-200 bg-white px-4 py-6 text-center text-sm text-slate-400">
+          <p className="rounded-lg border border-border bg-card px-4 py-6 text-center text-sm text-muted-foreground">
             Nenhuma pendência em aberto.
           </p>
         )}
@@ -58,10 +58,10 @@ export default async function PendenciasPage() {
             <AlertaCard key={p.id} tom="alerta">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <p className="text-sm font-medium text-slate-900">
+                  <p className="text-sm font-medium text-foreground">
                     {cliente || "(cliente não identificado)"} — {produto || "produto não informado"}
                   </p>
-                  <p className="text-xs text-slate-600">
+                  <p className="text-xs text-muted-foreground">
                     Nome na planilha: <strong>{p.nomePlanilha || "—"}</strong> · Data: {data || "—"} ·
                     Motivo: {MOTIVO_LABEL[p.motivo] ?? p.motivo} · Arquivo: {p.importacao.arquivoNome}
                   </p>
@@ -69,7 +69,7 @@ export default async function PendenciasPage() {
                 {p.motivo === "VENDEDOR_NAO_ENCONTRADO" ? (
                   <FormResolverPendencia pendenciaId={p.id} vendedores={vendedores} />
                 ) : (
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-muted-foreground">
                     corrija a planilha original e reimporte
                   </span>
                 )}
@@ -79,9 +79,9 @@ export default async function PendenciasPage() {
         })}
       </section>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-sm text-slate-700">Resolvidas recentemente</CardTitle>
+          <CardTitle className="text-sm text-foreground/80">Resolvidas recentemente</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -102,7 +102,7 @@ export default async function PendenciasPage() {
               ))}
               {resolvidas.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={3} className="py-6 text-center text-slate-400">
+                  <TableCell colSpan={3} className="py-6 text-center text-muted-foreground">
                     Nenhuma pendência resolvida ainda.
                   </TableCell>
                 </TableRow>

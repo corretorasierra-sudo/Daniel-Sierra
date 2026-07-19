@@ -31,15 +31,15 @@ export default async function ImportarLeadsPage() {
         subtitulo="Leads duplicados (mesmo telefone já cadastrado) são ignorados automaticamente."
       />
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardContent>
           <FormImportarLeads />
         </CardContent>
       </Card>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-sm text-slate-700">Histórico de importações</CardTitle>
+          <CardTitle className="text-sm text-foreground/80">Histórico de importações</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -58,7 +58,7 @@ export default async function ImportarLeadsPage() {
             <TableBody>
               {importacoes.map((imp) => (
                 <TableRow key={imp.id}>
-                  <TableCell className="font-medium text-slate-900">{imp.arquivoNome}</TableCell>
+                  <TableCell className="font-medium text-foreground">{imp.arquivoNome}</TableCell>
                   <TableCell>{imp.importadoPor.nome}</TableCell>
                   <TableCell>{formatarDataHora(imp.createdAt)}</TableCell>
                   <TableCell>{imp.status}</TableCell>
@@ -70,7 +70,7 @@ export default async function ImportarLeadsPage() {
               ))}
               {importacoes.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={8} className="py-6 text-center text-slate-400">
+                  <TableCell colSpan={8} className="py-6 text-center text-muted-foreground">
                     Nenhuma importação ainda.
                   </TableCell>
                 </TableRow>

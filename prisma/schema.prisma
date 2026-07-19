@@ -92,6 +92,7 @@ model User {
   importacoesLead       ImportacaoLead[]
   pendenciasResolvidas  PendenciaImportacao[] @relation("PendenciaResolvidaPor")
   historicoEtapaLead    HistoricoEtapaLead[]
+  promocoesDiaAtualizadas PromocaoDia[]
 
   @@map("users")
 }
@@ -138,6 +139,25 @@ model Meta {
 
   @@index([vendedorId, dataInicio, dataFim])
   @@map("metas")
+}
+
+// ---------------------------------------------------------------------------
+// Promoção do dia
+// ---------------------------------------------------------------------------
+
+/** Uma promoção fixa por dia da semana (não por data) — gerente/coordenador
+ *  preenchem uma vez e ela se repete toda semana, mostrada no painel do
+ *  vendedor no dia correspondente. */
+model PromocaoDia {
+  id              String   @id @default(cuid())
+  diaSemana       Int      @unique // 0=domingo ... 6=sábado, mesmo padrão de Date.getDay()
+  texto           String
+  atualizadoPorId String?
+  atualizadoPor   User?    @relation(fields: [atualizadoPorId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("promocoes_dia")
 }
 
 // ---------------------------------------------------------------------------

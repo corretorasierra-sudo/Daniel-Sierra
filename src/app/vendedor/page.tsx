@@ -9,6 +9,7 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
 import { AvatarUpload } from "@/components/dashboard/AvatarUpload";
 import { RankingVendedores } from "@/components/dashboard/RankingVendedores";
+import { PromocaoDoDiaCard } from "@/components/dashboard/PromocaoDoDiaCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { atualizarMinhaFoto } from "./actions";
 
@@ -25,7 +26,7 @@ export default async function VendedorHomePage() {
 
   if (!vendedorId) {
     return (
-      <p className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-500">
+      <p className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
         Esta conta não está vinculada a um vendedor.
       </p>
     );
@@ -48,6 +49,7 @@ export default async function VendedorHomePage() {
     posVendaPendente,
     vendedoresAtivos,
     vendasDoMesPorVendedor,
+    promocaoHoje,
   ] = await Promise.all([
     prisma.vendedor.findUnique({ where: { id: vendedorId }, include: { user: true } }),
     prisma.meta.findFirst({
@@ -100,6 +102,7 @@ export default async function VendedorHomePage() {
       where: { status: "ATIVA", dataVenda: { gte: inicioMes, lte: fimMes } },
       _count: { _all: true },
     }),
+    prisma.promocaoDia.findUnique({ where: { diaSemana: hoje.getDay() } }),
   ]);
 
   const meta = metaMensal?.valorMeta ?? 0;
@@ -136,10 +139,12 @@ export default async function VendedorHomePage() {
         }
       />
 
+      {promocaoHoje && <PromocaoDoDiaCard texto={promocaoHoje.texto} />}
+
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <Card className="border-slate-200/80 shadow-sm lg:col-span-1">
+        <Card className="border-border/80 shadow-sm lg:col-span-1">
           <CardHeader>
-            <CardTitle className="text-sm text-slate-600">Meta do mês</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">Meta do mês</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-2">
             <ProgressRing
@@ -149,20 +154,20 @@ export default async function VendedorHomePage() {
               label={`${progresso.realizado}/${progresso.meta || "—"}`}
               sublabel="vendas"
             />
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
               {metaMensal ? "meta mensal" : "nenhuma meta definida"}
             </p>
             {metaMensal && mediaNecessaria > 0 && (
-              <p className="text-center text-xs text-slate-500">
+              <p className="text-center text-xs text-muted-foreground">
                 Faltam {progresso.restante} vendas — {mediaNecessaria.toFixed(2)}/dia útil pra bater.
               </p>
             )}
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200/80 shadow-sm lg:col-span-2">
+        <Card className="border-border/80 shadow-sm lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-sm text-slate-700">Ranking do mês</CardTitle>
+            <CardTitle className="text-sm text-foreground/80">Ranking do mês</CardTitle>
           </CardHeader>
           <CardContent>
             <RankingVendedores itens={rankingMensal} vendedorAtualId={vendedorId} />
@@ -177,7 +182,7 @@ export default async function VendedorHomePage() {
           icon={CalendarClock}
           tom="info"
           contexto={
-            <Link href="/vendedor/leads" className="inline-flex items-center gap-1 text-lime-700 hover:underline">
+            <Link href="/vendedor/leads" className="inline-flex items-center gap-1 text-lime-700 hover:underline dark:text-lime-400">
               ver leads <ArrowRight className="size-3" />
             </Link>
           }
@@ -188,25 +193,25 @@ export default async function VendedorHomePage() {
           icon={HeartHandshake}
           tom={posVendaPendente > 0 ? "alerta" : "sucesso"}
           contexto={
-            <Link href="/vendedor/pos-venda" className="inline-flex items-center gap-1 text-lime-700 hover:underline">
+            <Link href="/vendedor/pos-venda" className="inline-flex items-center gap-1 text-lime-700 hover:underline dark:text-lime-400">
               ver checklist <ArrowRight className="size-3" />
             </Link>
           }
         />
       </section>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-sm text-slate-700">Leads por etapa</CardTitle>
+          <CardTitle className="text-sm text-foreground/80">Leads por etapa</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {(Object.keys(ETAPA_LABEL) as EtapaLead[]).map((etapa) => (
-              <div key={etapa} className="rounded-lg border border-slate-100 bg-slate-50/60 p-3 text-center">
-                <p className="text-lg font-semibold text-slate-900">
+              <div key={etapa} className="rounded-lg border border-border bg-muted/60 p-3 text-center">
+                <p className="text-lg font-semibold text-foreground">
                   {contagemPorEtapa.get(etapa) ?? 0}
                 </p>
-                <p className="text-xs text-slate-500">{ETAPA_LABEL[etapa]}</p>
+                <p className="text-xs text-muted-foreground">{ETAPA_LABEL[etapa]}</p>
               </div>
             ))}
           </div>
@@ -214,14 +219,14 @@ export default async function VendedorHomePage() {
       </Card>
 
       {(atividadesHoje.length > 0 || leadsRetornoHoje.length > 0) && (
-        <Card className="border-slate-200/80 shadow-sm">
+        <Card className="border-border/80 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-sm text-slate-700">Agenda de hoje</CardTitle>
+            <CardTitle className="text-sm text-foreground/80">Agenda de hoje</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="flex flex-col gap-2">
               {atividadesHoje.map((a) => (
-                <li key={a.id} className="text-sm text-slate-700">
+                <li key={a.id} className="text-sm text-foreground/80">
                   <Link href="/vendedor/leads" className="underline">
                     {a.lead.nome}
                   </Link>{" "}
@@ -229,7 +234,7 @@ export default async function VendedorHomePage() {
                 </li>
               ))}
               {leadsRetornoHoje.map((l) => (
-                <li key={l.id} className="text-sm text-slate-700">
+                <li key={l.id} className="text-sm text-foreground/80">
                   <Link href="/vendedor/leads" className="underline">
                     {l.nome}
                   </Link>{" "}

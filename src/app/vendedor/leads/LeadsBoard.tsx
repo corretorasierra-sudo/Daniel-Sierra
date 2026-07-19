@@ -63,7 +63,7 @@ export function LeadsBoard({ leads }: { leads: LeadResumo[] }) {
                     <LeadCard key={lead.id} lead={lead} arrastavel />
                   ))}
                   {leadsDaEtapa.length === 0 && (
-                    <p className="rounded-lg border border-dashed border-slate-400/60 bg-white/50 px-3 py-4 text-center text-xs text-slate-500">
+                    <p className="rounded-lg border border-dashed border-border/60 bg-card/50 px-3 py-4 text-center text-xs text-muted-foreground">
                       nenhum lead
                     </p>
                   )}
@@ -77,7 +77,7 @@ export function LeadsBoard({ leads }: { leads: LeadResumo[] }) {
       <TabsContent value="lista">
         <div className="flex flex-col gap-2">
           {leadsState.length === 0 && (
-            <p className="rounded-lg border border-dashed border-slate-200 bg-white px-4 py-6 text-center text-sm text-slate-400">
+            <p className="rounded-lg border border-dashed border-border bg-card px-4 py-6 text-center text-sm text-muted-foreground">
               Nenhum lead cadastrado ainda.
             </p>
           )}

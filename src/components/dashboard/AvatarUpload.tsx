@@ -70,7 +70,7 @@ export function AvatarUpload({
         type="button"
         onClick={() => inputRef.current?.click()}
         disabled={pending}
-        className="group relative shrink-0 cursor-pointer overflow-hidden rounded-full border-2 border-white shadow-sm ring-1 ring-slate-200 transition-transform hover:ring-2 hover:ring-lime-400 active:scale-95"
+        className="group relative shrink-0 cursor-pointer overflow-hidden rounded-full border-2 border-card shadow-sm ring-1 ring-border transition-transform hover:ring-2 hover:ring-lime-400 active:scale-95"
         style={{ width: tamanho, height: tamanho }}
         title="Trocar foto"
       >

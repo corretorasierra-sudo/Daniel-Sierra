@@ -19,7 +19,7 @@ export function FormResolverPendencia({
       <select
         name="vendedorId"
         required
-        className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm shadow-sm outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20"
+        className="rounded-lg border border-border bg-card px-2.5 py-1.5 text-sm shadow-sm outline-none focus:border-lime-500 focus:ring-2 focus:ring-lime-500/20"
         defaultValue=""
       >
         <option value="" disabled>

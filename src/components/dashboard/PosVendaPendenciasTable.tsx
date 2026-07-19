@@ -11,9 +11,9 @@ import type { PendenciaPosVendaResumo } from "@/lib/posVenda";
 
 function Marca({ ok }: { ok: boolean }) {
   return ok ? (
-    <CheckCircle2 className="size-4 text-lime-600" />
+    <CheckCircle2 className="size-4 text-lime-600 dark:text-lime-400" />
   ) : (
-    <XCircle className="size-4 text-red-400" />
+    <XCircle className="size-4 text-red-400 dark:text-red-500/80" />
   );
 }
 
@@ -21,7 +21,7 @@ function Marca({ ok }: { ok: boolean }) {
 export function PosVendaPendenciasTable({ itens }: { itens: PendenciaPosVendaResumo[] }) {
   if (itens.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed border-slate-200 px-4 py-8 text-center text-sm text-slate-400">
+      <p className="rounded-lg border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
         Nenhuma pendência de pós-venda no momento.
       </p>
     );
@@ -43,7 +43,7 @@ export function PosVendaPendenciasTable({ itens }: { itens: PendenciaPosVendaRes
       <TableBody>
         {itens.map((item) => (
           <TableRow key={item.id}>
-            <TableCell className="font-medium text-slate-900">{item.vendedorNome}</TableCell>
+            <TableCell className="font-medium text-foreground">{item.vendedorNome}</TableCell>
             <TableCell>{item.clienteNome}</TableCell>
             <TableCell>{new Intl.DateTimeFormat("pt-BR").format(item.dataVenda)}</TableCell>
             <TableCell>

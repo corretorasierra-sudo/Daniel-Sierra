@@ -21,14 +21,14 @@ export function StatCard({
   const classes = tomClasses(tom);
 
   return (
-    <Card className={cn("border-slate-200/80 shadow-sm", className)}>
+    <Card className={cn("border-border shadow-sm", className)}>
       <CardContent className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <p className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+          <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
             {label}
           </p>
-          <p className="text-2xl font-semibold text-slate-900">{valor}</p>
-          {contexto && <p className="text-sm text-slate-500">{contexto}</p>}
+          <p className="text-2xl font-semibold text-foreground">{valor}</p>
+          {contexto && <p className="text-sm text-muted-foreground">{contexto}</p>}
         </div>
         {Icon && (
           <div

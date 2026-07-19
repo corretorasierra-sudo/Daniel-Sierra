@@ -39,7 +39,7 @@ export default async function ImportarVendasPage() {
         action={
           pendenciasAbertas > 0 ? (
             <Link href="/coordenador/pendencias">
-              <Badge className="gap-1.5 bg-amber-100 px-3 py-1.5 text-amber-800 hover:bg-amber-200">
+              <Badge className="gap-1.5 bg-amber-100 px-3 py-1.5 text-amber-800 hover:bg-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:hover:bg-amber-500/25">
                 <AlertTriangle className="size-3.5" />
                 {pendenciasAbertas} pendência(s) aberta(s)
               </Badge>
@@ -48,15 +48,15 @@ export default async function ImportarVendasPage() {
         }
       />
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardContent>
           <FormImportarVendas />
         </CardContent>
       </Card>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-sm text-slate-700">Histórico de importações</CardTitle>
+          <CardTitle className="text-sm text-foreground/80">Histórico de importações</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -75,7 +75,7 @@ export default async function ImportarVendasPage() {
             <TableBody>
               {importacoes.map((imp) => (
                 <TableRow key={imp.id}>
-                  <TableCell className="font-medium text-slate-900">{imp.arquivoNome}</TableCell>
+                  <TableCell className="font-medium text-foreground">{imp.arquivoNome}</TableCell>
                   <TableCell>{imp.importadoPor.nome}</TableCell>
                   <TableCell>{formatarDataHora(imp.createdAt)}</TableCell>
                   <TableCell>{imp.status}</TableCell>
@@ -87,7 +87,7 @@ export default async function ImportarVendasPage() {
               ))}
               {importacoes.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={8} className="py-6 text-center text-slate-400">
+                  <TableCell colSpan={8} className="py-6 text-center text-muted-foreground">
                     Nenhuma importação ainda.
                   </TableCell>
                 </TableRow>

@@ -21,6 +21,7 @@ const REGRAS_POR_PREFIXO: { prefixo: string; permitido: Role[] }[] = [
   { prefixo: "/coordenador", permitido: ["ADMIN", "COORDENADOR", "GERENTE"] },
   { prefixo: "/vendedor", permitido: ["ADMIN", "VENDEDOR"] },
   { prefixo: "/metas", permitido: ["ADMIN", "GERENTE"] },
+  { prefixo: "/promocoes", permitido: ["ADMIN", "GERENTE", "COORDENADOR"] },
 ];
 
 export default auth((req) => {

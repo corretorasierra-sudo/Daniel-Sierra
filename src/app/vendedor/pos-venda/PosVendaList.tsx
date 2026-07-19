@@ -68,14 +68,14 @@ function ChecklistCheckbox({
 export function PosVendaList({ itens }: { itens: PosVendaResumo[] }) {
   if (itens.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed border-slate-200 bg-white px-4 py-6 text-center text-sm text-slate-400">
+      <p className="rounded-lg border border-dashed border-border bg-card px-4 py-6 text-center text-sm text-muted-foreground">
         Nenhum acompanhamento cadastrado.
       </p>
     );
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+    <div className="rounded-xl border border-border bg-card shadow-sm">
       <Table>
         <TableHeader>
           <TableRow>
@@ -101,13 +101,13 @@ export function PosVendaList({ itens }: { itens: PosVendaResumo[] }) {
               item.indicacaoRecebida;
             return (
               <TableRow key={item.id}>
-                <TableCell className="font-medium text-slate-900">
+                <TableCell className="font-medium text-foreground">
                   {item.venda.clienteNome}
                 </TableCell>
                 <TableCell>{item.venda.clienteTelefone ?? "—"}</TableCell>
                 <TableCell>{item.venda.codigoExterno ?? "—"}</TableCell>
                 <TableCell>
-                  <Badge variant="outline" className="border-slate-200 bg-slate-50 text-slate-700">
+                  <Badge variant="outline" className="border-border bg-muted text-foreground/80">
                     {PROSPECCAO_LABEL[item.venda.tipoProspeccao]}
                   </Badge>
                 </TableCell>
@@ -143,8 +143,8 @@ export function PosVendaList({ itens }: { itens: PosVendaResumo[] }) {
                     variant="outline"
                     className={
                       completo
-                        ? "border-lime-200 bg-lime-50 text-lime-700"
-                        : "border-amber-200 bg-amber-50 text-amber-700"
+                        ? "border-lime-200 bg-lime-50 text-lime-700 dark:border-lime-500/30 dark:bg-lime-500/10 dark:text-lime-300"
+                        : "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300"
                     }
                   >
                     {completo ? "completo" : "pendente"}

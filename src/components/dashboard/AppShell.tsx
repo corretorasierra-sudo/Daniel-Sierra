@@ -1,6 +1,7 @@
 import { LogOut } from "lucide-react";
 import { signOut } from "@/auth";
 import { SidebarNav, type SidebarLink } from "./SidebarNav";
+import { ThemeToggle } from "./ThemeToggle";
 
 /**
  * Casca de página consistente: sidebar lateral (verde-petróleo escuro) +
@@ -19,7 +20,7 @@ export function AppShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-background">
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col justify-between overflow-y-auto bg-[var(--sidebar)] px-4 py-6 lg:flex">
         <div className="flex flex-col gap-8">
           <div className="flex items-center gap-2 px-2">
@@ -38,9 +39,12 @@ export function AppShell({
         </div>
 
         <div className="flex flex-col gap-3 border-t border-[var(--sidebar-border)] pt-4">
-          <span className="truncate px-2 text-xs text-[var(--sidebar-foreground)]/70">
-            {usuarioNome}
-          </span>
+          <div className="flex items-center justify-between gap-2 px-2">
+            <span className="truncate text-xs text-[var(--sidebar-foreground)]/70">
+              {usuarioNome}
+            </span>
+            <ThemeToggle variant="dark" />
+          </div>
           <form
             action={async () => {
               "use server";
@@ -59,27 +63,30 @@ export function AppShell({
       </aside>
 
       <div className="flex min-h-screen flex-1 flex-col">
-        <header className="flex items-center justify-between gap-3 border-b border-slate-200 bg-white px-4 py-3 lg:hidden">
+        <header className="flex items-center justify-between gap-3 border-b border-border bg-card px-4 py-3 lg:hidden">
           <div>
-            <p className="text-sm font-semibold text-slate-900">Cartão de Todos</p>
-            <p className="text-xs text-slate-500">{titulo}</p>
+            <p className="text-sm font-semibold text-foreground">Cartão de Todos</p>
+            <p className="text-xs text-muted-foreground">{titulo}</p>
           </div>
-          <form
-            action={async () => {
-              "use server";
-              await signOut({ redirectTo: "/login" });
-            }}
-          >
-            <button
-              type="submit"
-              className="cursor-pointer rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-600 transition-all hover:bg-slate-50 active:scale-[0.97]"
+          <div className="flex items-center gap-2">
+            <ThemeToggle variant="light" />
+            <form
+              action={async () => {
+                "use server";
+                await signOut({ redirectTo: "/login" });
+              }}
             >
-              Sair
-            </button>
-          </form>
+              <button
+                type="submit"
+                className="cursor-pointer rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground transition-all hover:bg-muted active:scale-[0.97]"
+              >
+                Sair
+              </button>
+            </form>
+          </div>
         </header>
 
-        <div className="flex flex-wrap gap-2 overflow-x-auto border-b border-slate-200 bg-white px-4 py-2 lg:hidden">
+        <div className="flex flex-wrap gap-2 overflow-x-auto border-b border-border bg-card px-4 py-2 lg:hidden">
           <SidebarNav links={links} variant="light" />
         </div>
 

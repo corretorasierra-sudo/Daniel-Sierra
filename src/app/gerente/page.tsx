@@ -107,9 +107,9 @@ export default async function GerenteHomePage() {
       />
 
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-4">
-        <Card className="border-slate-200/80 shadow-sm lg:col-span-1">
+        <Card className="border-border/80 shadow-sm lg:col-span-1">
           <CardHeader>
-            <CardTitle className="text-sm text-slate-600">Meta da unidade</CardTitle>
+            <CardTitle className="text-sm text-muted-foreground">Meta da unidade</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-2">
             <ProgressRing
@@ -118,7 +118,7 @@ export default async function GerenteHomePage() {
               espessura={12}
               label={`${progressoUnidade.realizado}/${progressoUnidade.meta || "—"}`}
             />
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
               {metaUnidade ? "vendas no período" : "meta não definida"}
             </p>
           </CardContent>
@@ -148,9 +148,9 @@ export default async function GerenteHomePage() {
         </div>
       </section>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-sm text-slate-700">Ranking do mês</CardTitle>
+          <CardTitle className="text-sm text-foreground/80">Ranking do mês</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
           <RankingBarChart
@@ -175,7 +175,7 @@ export default async function GerenteHomePage() {
               {ranking.map((r) => (
                 <TableRow key={r.vendedorId}>
                   <TableCell>{r.posicao}</TableCell>
-                  <TableCell className="font-medium text-slate-900">{r.nome}</TableCell>
+                  <TableCell className="font-medium text-foreground">{r.nome}</TableCell>
                   <TableCell>{r.realizado}</TableCell>
                   <TableCell>{r.meta || "—"}</TableCell>
                   <TableCell>{r.meta > 0 ? `${r.percentual.toFixed(0)}%` : "—"}</TableCell>
@@ -189,9 +189,9 @@ export default async function GerenteHomePage() {
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <AlertaCard titulo="Alertas — sem venda no período" icon={AlertOctagon} tom="risco">
           {semVenda.length === 0 ? (
-            <p className="text-sm text-red-700/70">Todo mundo já vendeu algo no período.</p>
+            <p className="text-sm text-red-700/70 dark:text-red-300/70">Todo mundo já vendeu algo no período.</p>
           ) : (
-            <ul className="list-disc pl-5 text-sm text-red-800">
+            <ul className="list-disc pl-5 text-sm text-red-800 dark:text-red-300">
               {semVenda.map((v) => (
                 <li key={v.vendedorId}>{v.nome}</li>
               ))}
@@ -201,9 +201,9 @@ export default async function GerenteHomePage() {
 
         <AlertaCard titulo="Alertas — abaixo de 50% da meta" icon={Gauge} tom="alerta">
           {abaixoDaMeta.length === 0 ? (
-            <p className="text-sm text-amber-700/70">Ninguém abaixo do esperado.</p>
+            <p className="text-sm text-amber-700/70 dark:text-amber-300/70">Ninguém abaixo do esperado.</p>
           ) : (
-            <ul className="list-disc pl-5 text-sm text-amber-800">
+            <ul className="list-disc pl-5 text-sm text-amber-800 dark:text-amber-300">
               {abaixoDaMeta.map((v) => (
                 <li key={v.vendedorId}>
                   {v.nome} — {v.percentual.toFixed(0)}%
@@ -214,18 +214,18 @@ export default async function GerenteHomePage() {
         </AlertaCard>
       </section>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-sm text-slate-700">
-            <Clock className="size-4 text-slate-400" />
+          <CardTitle className="flex items-center gap-2 text-sm text-foreground/80">
+            <Clock className="size-4 text-muted-foreground" />
             Leads parados (sem contato há {DIAS_LEAD_PARADO}+ dias)
           </CardTitle>
         </CardHeader>
         <CardContent>
           {leadsParados.length === 0 ? (
-            <p className="text-sm text-slate-400">Nenhum lead parado no momento.</p>
+            <p className="text-sm text-muted-foreground">Nenhum lead parado no momento.</p>
           ) : (
-            <ul className="flex flex-col gap-1 text-sm text-slate-700">
+            <ul className="flex flex-col gap-1 text-sm text-foreground/80">
               {leadsParados.map((lead) => (
                 <li key={lead.id}>
                   {lead.nome} — {lead.vendedor?.nomeCompleto ?? "sem vendedor"} — {lead.etapa}
@@ -236,9 +236,9 @@ export default async function GerenteHomePage() {
         </CardContent>
       </Card>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-sm text-slate-700">
+          <CardTitle className="text-sm text-foreground/80">
             Pós-venda pendente por vendedor
           </CardTitle>
         </CardHeader>

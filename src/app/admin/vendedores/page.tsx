@@ -26,16 +26,16 @@ export default async function VendedoresPage() {
         subtitulo="Cadastro dos vendedores da unidade — nome usado para casar com as planilhas de venda e leads."
       />
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-sm text-slate-700">Novo vendedor</CardTitle>
+          <CardTitle className="text-sm text-foreground/80">Novo vendedor</CardTitle>
         </CardHeader>
         <CardContent>
           <FormNovoVendedor />
         </CardContent>
       </Card>
 
-      <Card className="border-slate-200/80 shadow-sm">
+      <Card className="border-border/80 shadow-sm">
         <CardContent>
           <Table>
             <TableHeader>
@@ -56,26 +56,26 @@ export default async function VendedoresPage() {
                       <input
                         name="nomeCompleto"
                         defaultValue={vendedor.nomeCompleto}
-                        className="rounded border border-transparent px-1 py-0.5 text-sm font-medium text-slate-900 hover:border-slate-300 focus:border-lime-400 focus:outline-none focus:ring-2 focus:ring-lime-500/20"
+                        className="rounded border border-transparent px-1 py-0.5 text-sm font-medium text-foreground hover:border-border focus:border-lime-400 focus:outline-none focus:ring-2 focus:ring-lime-500/20"
                       />
                       <input type="hidden" name="telefone" value={vendedor.telefone ?? ""} />
                       <button
                         type="submit"
-                        className="cursor-pointer text-xs text-slate-500 underline transition-all hover:text-slate-800 active:scale-95"
+                        className="cursor-pointer text-xs text-muted-foreground underline transition-all hover:text-foreground active:scale-95"
                       >
                         salvar
                       </button>
                     </form>
                   </TableCell>
-                  <TableCell className="text-slate-600">{vendedor.telefone ?? "—"}</TableCell>
-                  <TableCell className="text-slate-600">{vendedor.user.email}</TableCell>
+                  <TableCell className="text-muted-foreground">{vendedor.telefone ?? "—"}</TableCell>
+                  <TableCell className="text-muted-foreground">{vendedor.user.email}</TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
                       className={
                         vendedor.ativo
-                          ? "border-lime-200 bg-lime-50 text-lime-700"
-                          : "border-slate-200 bg-slate-100 text-slate-500"
+                          ? "border-lime-200 bg-lime-50 text-lime-700 dark:border-lime-500/30 dark:bg-lime-500/10 dark:text-lime-300"
+                          : "border-border bg-muted text-muted-foreground"
                       }
                     >
                       {vendedor.ativo ? "Ativo" : "Inativo"}
@@ -86,7 +86,7 @@ export default async function VendedoresPage() {
                       <input type="hidden" name="id" value={vendedor.id} />
                       <button
                         type="submit"
-                        className="cursor-pointer text-xs text-slate-500 underline transition-all hover:text-slate-800 active:scale-95"
+                        className="cursor-pointer text-xs text-muted-foreground underline transition-all hover:text-foreground active:scale-95"
                       >
                         {vendedor.ativo ? "desativar" : "reativar"}
                       </button>
@@ -96,7 +96,7 @@ export default async function VendedoresPage() {
               ))}
               {vendedores.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="py-6 text-center text-slate-400">
+                  <TableCell colSpan={5} className="py-6 text-center text-muted-foreground">
                     Nenhum vendedor cadastrado ainda.
                   </TableCell>
                 </TableRow>

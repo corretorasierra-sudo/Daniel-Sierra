@@ -11,7 +11,7 @@ export default async function LeadsPage() {
 
   if (!vendedorId) {
     return (
-      <p className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-500">
+      <p className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
         Esta conta não está vinculada a um vendedor.
       </p>
     );
