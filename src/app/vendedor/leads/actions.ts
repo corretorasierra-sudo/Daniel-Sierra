@@ -21,7 +21,7 @@ const registrarAtividadeSchema = z.object({
   observacao: z.string().optional(),
   proximaAcao: z.string().optional(),
   proximaAcaoData: z.string().optional(),
-  novaEtapa: z.enum(["NOVO", "EM_TRATATIVA", "FECHAMENTO", "PERDIDO"]),
+  novaEtapa: z.enum(["NOVO", "EM_TRATATIVA", "SEM_RESPOSTA", "FECHAMENTO", "PERDIDO"]),
 });
 
 export async function registrarAtividade(formData: FormData) {
@@ -92,7 +92,7 @@ export async function registrarAtividade(formData: FormData) {
 
 const moverEtapaSchema = z.object({
   leadId: z.string().min(1),
-  novaEtapa: z.enum(["NOVO", "EM_TRATATIVA", "FECHAMENTO", "PERDIDO"]),
+  novaEtapa: z.enum(["NOVO", "EM_TRATATIVA", "SEM_RESPOSTA", "FECHAMENTO", "PERDIDO"]),
 });
 
 /** Muda só a etapa do lead (drag-and-drop no kanban) — não registra atividade, só o histórico de etapa. */
@@ -125,6 +125,30 @@ export async function moverEtapaLead(leadId: string, novaEtapa: EtapaLead) {
 
   revalidatePath("/vendedor/leads");
   revalidatePath("/vendedor");
+}
+
+const atualizarObservacaoSchema = z.object({
+  leadId: z.string().min(1),
+  observacoes: z.string(),
+});
+
+/** Edição da célula de observação na planilha de leads. */
+export async function atualizarObservacaoLead(leadId: string, observacoes: string) {
+  const session = await exigirVendedor();
+  const dados = atualizarObservacaoSchema.parse({ leadId, observacoes });
+
+  const lead = await prisma.lead.findUniqueOrThrow({ where: { id: dados.leadId } });
+
+  if (session.user.role === "VENDEDOR" && lead.vendedorId !== session.user.vendedorId) {
+    throw new Error("Você não pode editar um lead de outro vendedor.");
+  }
+
+  await prisma.lead.update({
+    where: { id: lead.id },
+    data: { observacoes: dados.observacoes || null },
+  });
+
+  revalidatePath("/vendedor/leads");
 }
 
 const criarLeadSchema = z.object({

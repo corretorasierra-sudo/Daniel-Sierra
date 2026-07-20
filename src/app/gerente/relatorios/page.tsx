@@ -17,10 +17,11 @@ import {
 } from "@/components/ui/table";
 
 const ETAPA_LABEL: Record<EtapaLead, string> = {
-  NOVO: "Novo",
+  NOVO: "Novo lead",
   EM_TRATATIVA: "Em tratativa",
-  FECHAMENTO: "Fechamento",
+  SEM_RESPOSTA: "Sem resposta",
   PERDIDO: "Perdido",
+  FECHAMENTO: "Concluído",
 };
 
 const TIPO_LABEL: Record<TipoAtividade, string> = {

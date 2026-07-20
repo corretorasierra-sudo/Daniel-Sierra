@@ -23,6 +23,7 @@ enum Role {
 enum EtapaLead {
   NOVO
   EM_TRATATIVA
+  SEM_RESPOSTA
   FECHAMENTO
   PERDIDO
 }

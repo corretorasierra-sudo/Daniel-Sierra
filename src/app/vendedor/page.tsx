@@ -14,10 +14,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { atualizarMinhaFoto } from "./actions";
 
 const ETAPA_LABEL: Record<EtapaLead, string> = {
-  NOVO: "Novo",
+  NOVO: "Novo lead",
   EM_TRATATIVA: "Em tratativa",
-  FECHAMENTO: "Fechamento",
+  SEM_RESPOSTA: "Sem resposta",
   PERDIDO: "Perdido",
+  FECHAMENTO: "Concluído",
 };
 
 export default async function VendedorHomePage() {
@@ -205,7 +206,7 @@ export default async function VendedorHomePage() {
           <CardTitle className="text-sm text-foreground/80">Leads por etapa</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {(Object.keys(ETAPA_LABEL) as EtapaLead[]).map((etapa) => (
               <div key={etapa} className="rounded-lg border border-border bg-muted/60 p-3 text-center">
                 <p className="text-lg font-semibold text-foreground">

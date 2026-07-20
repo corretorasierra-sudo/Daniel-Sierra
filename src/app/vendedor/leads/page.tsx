@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { LeadsBoard } from "./LeadsBoard";
+import { LeadsTable } from "./LeadsTable";
 import { NovoLeadDialog } from "./NovoLeadDialog";
 import { ImportarLeadsDialog } from "./ImportarLeadsDialog";
 import { PageHeader } from "@/components/dashboard/PageHeader";
@@ -26,7 +26,7 @@ export default async function LeadsPage() {
     <div className="flex flex-col gap-6">
       <PageHeader
         titulo="Meus leads"
-        subtitulo="Clique num lead pra registrar contato e mover de etapa."
+        subtitulo="Atualize o status e as observações direto na planilha."
         action={
           <div className="flex gap-2">
             <ImportarLeadsDialog />
@@ -35,7 +35,7 @@ export default async function LeadsPage() {
         }
       />
 
-      <LeadsBoard leads={leads} />
+      <LeadsTable leads={leads} />
     </div>
   );
 }
