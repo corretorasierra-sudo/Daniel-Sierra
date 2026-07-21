@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export interface OrbitIcon {
@@ -68,8 +69,8 @@ export function TechOrbitDisplay({ iconsArray }: { iconsArray: OrbitIcon[] }) {
         />
       ))}
 
-      <div className="z-10 flex size-16 items-center justify-center rounded-2xl bg-[var(--sidebar-primary)] text-xl font-bold text-[var(--sidebar-primary-foreground)] shadow-lg">
-        CT
+      <div className="relative z-10 size-16 overflow-hidden rounded-2xl shadow-lg">
+        <Image src="/logo-guarabira-icone.png" alt="Cartão de Todos Guarabira" fill sizes="64px" className="object-cover" />
       </div>
 
       {iconsArray.map((icon, index) => (

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { LogOut } from "lucide-react";
 import { signOut } from "@/auth";
 import { SidebarNav, type SidebarLink } from "./SidebarNav";
@@ -24,8 +25,8 @@ export function AppShell({
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col justify-between overflow-y-auto bg-[var(--sidebar)] px-4 py-6 lg:flex">
         <div className="flex flex-col gap-8">
           <div className="flex items-center gap-2 px-2">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-[var(--sidebar-primary)] text-sm font-bold text-[var(--sidebar-primary-foreground)]">
-              CT
+            <div className="relative size-8 shrink-0 overflow-hidden rounded-lg">
+              <Image src="/logo-guarabira-icone.png" alt="Cartão de Todos Guarabira" fill sizes="32px" className="object-cover" />
             </div>
             <div className="flex flex-col leading-tight">
               <span className="text-sm font-semibold text-[var(--sidebar-foreground)]">

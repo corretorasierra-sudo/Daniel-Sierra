@@ -58,7 +58,7 @@ export function AuthTabs({
               required={campo.required}
               onChange={campo.onChange}
               autoComplete={campo.type === "password" ? "current-password" : "email"}
-              className="h-10"
+              className="h-10 text-slate-900 placeholder:text-slate-400"
             />
           </div>
         ))}
