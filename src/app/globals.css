@@ -106,7 +106,7 @@ body {
   --accent-foreground: #ecfccb;
   --destructive: #991b1b;
   --border: #1e293b;
-  --input: oklch(1 0 0 / 15%);
+  --input: #1e293b;
   --ring: #aff33e;
   --chart-1: #aff33e;
   --chart-2: #2dd4bf;
