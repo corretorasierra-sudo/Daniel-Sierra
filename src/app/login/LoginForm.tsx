@@ -53,7 +53,12 @@ const iconsArray: OrbitIcon[] = [
   },
   {
     component: () => (
-      <OrbitLogo src="/logo-cartao-de-todos-sonhos.png" alt="Cartão de Todos Sonhos" className="size-[46px]" />
+      <OrbitLogo
+        src="/logo-cartao-de-todos-sonhos.png"
+        alt="Cartão de Todos Sonhos"
+        className="size-[64px]"
+        padding="p-0"
+      />
     ),
     className: "border-none bg-transparent shadow-none",
     duration: 24,
