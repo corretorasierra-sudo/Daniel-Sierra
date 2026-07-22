@@ -37,7 +37,10 @@ function OrbitingIcon({
 
   return (
     <div className="absolute top-1/2 left-1/2 size-0 animate-orbit-spin" style={animStyle}>
-      <div className="w-fit" style={{ transform: `translateX(${radius}px)` }}>
+      <div
+        className="w-fit"
+        style={{ transform: `translateX(${radius}px) translateY(-50%) translateX(-50%)` }}
+      >
         <div className="w-fit animate-orbit-counter" style={animStyle}>
           <div
             className={cn(
