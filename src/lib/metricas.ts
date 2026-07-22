@@ -119,6 +119,24 @@ export function calcularFimSemana(inicioSemana: Date): Date {
   return d;
 }
 
+/**
+ * Conversão média de lead frio -> venda: 1 venda a cada 10 leads trabalhados
+ * (~10%). Mesmo padrão pra todo vendedor, novo ou veterano — decisão do
+ * gestor de propósito, pra não abaixar a régua de quem tá começando. Usada
+ * só pra derivar a meta de atividade (leads/contatos) a partir da meta de
+ * vendas, que continua sendo a mesma pra todos (hoje: 40/mês).
+ */
+export const TAXA_CONVERSAO_LEAD_FRIO = 0.1;
+
+/** Quantos leads/contatos são necessários no período pra sustentar uma meta de vendas. */
+export function calcularMetaAtividade(
+  metaVendas: number,
+  taxaConversao: number = TAXA_CONVERSAO_LEAD_FRIO
+): number {
+  if (metaVendas <= 0 || taxaConversao <= 0) return 0;
+  return metaVendas / taxaConversao;
+}
+
 export type ItemRanking = {
   vendedorId: string;
   nome: string;

@@ -13,7 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { tomClasses, type Tom } from "@/lib/design-tokens";
 import type { StatusMeta } from "@/lib/metricas";
-import type { ItemRankingLateral, PontoSerieDiaria } from "@/lib/rankingLateral";
+import type { ItemRankingLateral, MetricaRanking, PontoSerieDiaria } from "@/lib/rankingLateral";
 
 type Periodo = "diario" | "semanal" | "mensal";
 
@@ -21,6 +21,16 @@ const PERIODO_LABEL: Record<Periodo, string> = {
   diario: "Dia",
   semanal: "Semana",
   mensal: "Mês",
+};
+
+const METRICA_LABEL: Record<MetricaRanking, string> = {
+  vendas: "Vendas",
+  atividade: "Atividade",
+};
+
+const METRICA_UNIDADE: Record<MetricaRanking, string> = {
+  vendas: "venda(s)",
+  atividade: "contato(s)",
 };
 
 /** Mesmo esquema de cores (verde/amarelo/vermelho) usado em todo indicador do sistema. */
@@ -53,11 +63,11 @@ function DotStatus(props: { cx?: number; cy?: number; payload?: PontoSerieDiaria
   );
 }
 
-function GraficoVendedor({ serie, periodoLabel }: { serie: PontoSerieDiaria[]; periodoLabel: string }) {
+function GraficoVendedor({ serie, unidade }: { serie: PontoSerieDiaria[]; unidade: string }) {
   if (serie.length === 0) {
     return (
       <p className="px-1 py-4 text-center text-xs text-muted-foreground">
-        Sem vendas no período pra mostrar no gráfico.
+        Sem dados no período pra mostrar no gráfico.
       </p>
     );
   }
@@ -81,12 +91,11 @@ function GraficoVendedor({ serie, periodoLabel }: { serie: PontoSerieDiaria[]; p
         />
         <Tooltip
           contentStyle={{ borderRadius: 8, borderColor: "var(--border)", fontSize: 12 }}
-          labelFormatter={(label) => `${label} — ${periodoLabel}`}
-          formatter={(value) => [`${value} venda(s)`, ""]}
+          formatter={(value) => [`${value} ${unidade}`, ""]}
         />
         <Line
           type="monotone"
-          dataKey="vendas"
+          dataKey="valor"
           stroke="var(--foreground)"
           strokeWidth={3}
           dot={<DotStatus />}
@@ -98,22 +107,26 @@ function GraficoVendedor({ serie, periodoLabel }: { serie: PontoSerieDiaria[]; p
 }
 
 /**
- * Ranking lateral de vendedores com toggle diário/semanal/mensal. Clicar num
- * vendedor abre o gráfico de linha só dele (vendas por dia), com a bolinha
- * vermelha nos dias sem venda. Verde/amarelo/vermelho seguem sempre a mesma
- * régua de probabilidade de bater a meta (ver `calcularStatusMeta`).
+ * Ranking lateral de vendedores com toggle de métrica (vendas/atividade) e
+ * período (diário/semanal/mensal). Clicar num vendedor abre o gráfico de
+ * linha só dele, com a bolinha vermelha nos dias sem venda/contato.
+ * Verde/amarelo/vermelho seguem sempre a mesma régua de probabilidade de
+ * bater a meta (ver `calcularStatusMeta`) — inclusive a meta de atividade,
+ * que é derivada da meta de vendas pela taxa de conversão padrão (ver
+ * `calcularMetaAtividade`), igual pra todo vendedor.
  */
 export function RankingLateral({ itens }: { itens: ItemRankingLateral[] }) {
+  const [metrica, setMetrica] = useState<MetricaRanking>("vendas");
   const [periodo, setPeriodo] = useState<Periodo>("mensal");
   const [selecionadoId, setSelecionadoId] = useState<string | null>(null);
 
   const ordenados = useMemo(() => {
     return [...itens].sort((a, b) => {
-      const diff = b[periodo].percentual - a[periodo].percentual;
+      const diff = b[metrica][periodo].percentual - a[metrica][periodo].percentual;
       if (diff !== 0) return diff;
-      return b[periodo].realizado - a[periodo].realizado;
+      return b[metrica][periodo].realizado - a[metrica][periodo].realizado;
     });
-  }, [itens, periodo]);
+  }, [itens, metrica, periodo]);
 
   if (itens.length === 0) {
     return (
@@ -123,11 +136,31 @@ export function RankingLateral({ itens }: { itens: ItemRankingLateral[] }) {
     );
   }
 
-  const serieDoPeriodo = (item: ItemRankingLateral) =>
-    periodo === "mensal" ? item.serieDiaria : item.serieDiaria.slice(-7);
+  const serieDoPeriodo = (item: ItemRankingLateral) => {
+    const serie = item[metrica].serieDiaria;
+    return periodo === "mensal" ? serie : serie.slice(-7);
+  };
 
   return (
     <div className="flex flex-col gap-3">
+      <div className="flex gap-1 rounded-lg bg-muted p-1">
+        {(["vendas", "atividade"] as MetricaRanking[]).map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => setMetrica(m)}
+            className={cn(
+              "flex-1 rounded-md px-2 py-1.5 text-xs font-medium transition-colors",
+              metrica === m
+                ? "bg-card text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {METRICA_LABEL[m]}
+          </button>
+        ))}
+      </div>
+
       <div className="flex gap-1 rounded-lg bg-muted p-1">
         {(["diario", "semanal", "mensal"] as Periodo[]).map((p) => (
           <button
@@ -148,7 +181,7 @@ export function RankingLateral({ itens }: { itens: ItemRankingLateral[] }) {
 
       <ul className="flex flex-col gap-1.5">
         {ordenados.map((item, index) => {
-          const dados = item[periodo];
+          const dados = item[metrica][periodo];
           const aberto = selecionadoId === item.vendedorId;
 
           return (
@@ -186,9 +219,9 @@ export function RankingLateral({ itens }: { itens: ItemRankingLateral[] }) {
               {aberto && (
                 <div className="mt-1.5 rounded-lg border border-border bg-card px-2 py-3">
                   <p className="mb-1 px-1 text-xs font-medium text-muted-foreground">
-                    {item.nome} — vendas por dia
+                    {item.nome} — {METRICA_LABEL[metrica].toLowerCase()} por dia
                   </p>
-                  <GraficoVendedor serie={serieDoPeriodo(item)} periodoLabel={PERIODO_LABEL[periodo]} />
+                  <GraficoVendedor serie={serieDoPeriodo(item)} unidade={METRICA_UNIDADE[metrica]} />
                 </div>
               )}
             </li>

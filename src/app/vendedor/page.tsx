@@ -1,8 +1,16 @@
 import Link from "next/link";
-import { CalendarClock, HeartHandshake, ArrowRight } from "lucide-react";
+import { CalendarClock, HeartHandshake, ArrowRight, Flame } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { calcularProgressoMeta, calcularMediaNecessariaPorDia } from "@/lib/metricas";
+import {
+  calcularProgressoMeta,
+  calcularMediaNecessariaPorDia,
+  calcularDiasUteis,
+  calcularMetaAtividade,
+  calcularStatusMeta,
+  type StatusMeta,
+} from "@/lib/metricas";
+import type { Tom } from "@/lib/design-tokens";
 import type { EtapaLead } from "@prisma/client";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -51,6 +59,7 @@ export default async function VendedorHomePage() {
     vendedoresAtivos,
     vendasDoMesPorVendedor,
     promocaoHoje,
+    atividadesHojeContagem,
   ] = await Promise.all([
     prisma.vendedor.findUnique({ where: { id: vendedorId }, include: { user: true } }),
     prisma.meta.findFirst({
@@ -104,6 +113,13 @@ export default async function VendedorHomePage() {
       _count: { _all: true },
     }),
     prisma.promocaoDia.findUnique({ where: { diaSemana: hoje.getDay() } }),
+    prisma.atividade.count({
+      where: {
+        vendedorId,
+        dataHora: { gte: inicioHoje, lt: fimHoje },
+        tipo: { not: "OBSERVACAO" },
+      },
+    }),
   ]);
 
   const meta = metaMensal?.valorMeta ?? 0;
@@ -111,6 +127,11 @@ export default async function VendedorHomePage() {
   const mediaNecessaria = metaMensal
     ? calcularMediaNecessariaPorDia(meta, vendasNoPeriodo, metaMensal.dataFim, hoje)
     : 0;
+
+  const diasUteisMes = calcularDiasUteis(inicioMes, fimMes) || 1;
+  const metaAtividadeHoje = Math.round(calcularMetaAtividade(meta) / diasUteisMes);
+  const statusAtividadeHoje = calcularStatusMeta(atividadesHojeContagem, metaAtividadeHoje);
+  const TOM_POR_STATUS: Record<StatusMeta, Tom> = { verde: "sucesso", amarelo: "alerta", vermelho: "risco" };
 
   const contagemPorEtapa = new Map(leadsPorEtapa.map((g) => [g.etapa, g._count._all]));
 
@@ -176,7 +197,14 @@ export default async function VendedorHomePage() {
         </Card>
       </section>
 
-      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatCard
+          label="Atividade hoje"
+          valor={`${atividadesHojeContagem}${metaAtividadeHoje > 0 ? `/${metaAtividadeHoje}` : ""}`}
+          icon={Flame}
+          tom={TOM_POR_STATUS[statusAtividadeHoje]}
+          contexto="contatos de lead registrados hoje"
+        />
         <StatCard
           label="Retornos de hoje"
           valor={atividadesHoje.length + leadsRetornoHoje.length}
