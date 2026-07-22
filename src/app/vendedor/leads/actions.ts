@@ -24,10 +24,15 @@ const registrarAtividadeSchema = z.object({
   novaEtapa: z.enum(["NOVO", "EM_TRATATIVA", "SEM_RESPOSTA", "FECHAMENTO", "PERDIDO"]),
 });
 
-export async function registrarAtividade(formData: FormData) {
+export type EstadoRegistrarAtividade = { erro?: string; ok?: boolean } | undefined;
+
+export async function registrarAtividade(
+  _estado: EstadoRegistrarAtividade,
+  formData: FormData
+): Promise<EstadoRegistrarAtividade> {
   const session = await exigirVendedor();
 
-  const dados = registrarAtividadeSchema.parse({
+  const parsed = registrarAtividadeSchema.safeParse({
     leadId: formData.get("leadId"),
     tipo: formData.get("tipo"),
     resultado: formData.get("resultado") || undefined,
@@ -36,16 +41,18 @@ export async function registrarAtividade(formData: FormData) {
     proximaAcaoData: formData.get("proximaAcaoData") || undefined,
     novaEtapa: formData.get("novaEtapa"),
   });
+  if (!parsed.success) return { erro: "Preencha o tipo de contato e a etapa." };
+  const dados = parsed.data;
 
   const lead = await prisma.lead.findUniqueOrThrow({ where: { id: dados.leadId } });
 
   // Vendedor só mexe nos próprios leads. Admin pode mexer em qualquer um.
   if (session.user.role === "VENDEDOR" && lead.vendedorId !== session.user.vendedorId) {
-    throw new Error("Você não pode editar um lead de outro vendedor.");
+    return { erro: "Você não pode editar um lead de outro vendedor." };
   }
 
   const vendedorId = session.user.vendedorId ?? lead.vendedorId;
-  if (!vendedorId) throw new Error("Lead sem vendedor responsável.");
+  if (!vendedorId) return { erro: "Lead sem vendedor responsável." };
 
   const proximaAcaoData = dados.proximaAcaoData ? new Date(dados.proximaAcaoData) : null;
 
@@ -88,6 +95,7 @@ export async function registrarAtividade(formData: FormData) {
 
   revalidatePath("/vendedor/leads");
   revalidatePath("/vendedor");
+  return { ok: true };
 }
 
 const moverEtapaSchema = z.object({

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { moverEtapaLead, atualizarObservacaoLead, atualizarCampoLead, criarLead } from "./actions";
+import { RegistrarContatoDialog } from "./RegistrarContatoDialog";
 import {
   Table,
   TableBody,
@@ -180,6 +181,7 @@ export function LeadsTable({ leads }: { leads: LeadResumo[] }) {
             <TableHead className="w-36">Número</TableHead>
             <TableHead className="w-[14%]">Cidade</TableHead>
             <TableHead className="w-44">Status</TableHead>
+            <TableHead className="w-12">Contato</TableHead>
             <TableHead>Observação</TableHead>
           </TableRow>
         </TableHeader>
@@ -232,6 +234,9 @@ export function LeadsTable({ leads }: { leads: LeadResumo[] }) {
                     </option>
                   ))}
                 </select>
+              </TableCell>
+              <TableCell>
+                <RegistrarContatoDialog leadId={lead.id} etapaAtual={lead.etapa} nomeLead={lead.nome} />
               </TableCell>
               <TableCell className="whitespace-normal">
                 <input
@@ -288,6 +293,7 @@ export function LeadsTable({ leads }: { leads: LeadResumo[] }) {
               <TableCell className="text-xs text-muted-foreground">
                 {rascunho.salvando ? "Salvando..." : "Novo lead"}
               </TableCell>
+              <TableCell />
               <TableCell>
                 <input
                   value={rascunho.observacoes}
