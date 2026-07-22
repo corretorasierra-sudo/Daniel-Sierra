@@ -61,3 +61,20 @@ export const TOM_CLASSES: Record<Tom, TomClasses> = {
 export function tomClasses(tom: Tom): TomClasses {
   return TOM_CLASSES[tom];
 }
+
+/**
+ * Mesmo esquema verde/amarelo/vermelho de `calcularStatusMeta`, mapeado pra
+ * `Tom` (classes Tailwind) e pra cor bruta (fill de SVG/recharts, que aceita
+ * `var(--chart-N)` diretamente). Usado em todo indicador de meta do sistema.
+ */
+export const STATUS_META_TOM = {
+  verde: "sucesso",
+  amarelo: "alerta",
+  vermelho: "risco",
+} as const;
+
+export const STATUS_META_FILL = {
+  verde: "var(--chart-1)",
+  amarelo: "var(--chart-4)",
+  vermelho: "#ef4444",
+} as const;

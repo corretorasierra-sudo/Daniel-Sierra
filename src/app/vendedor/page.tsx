@@ -8,9 +8,9 @@ import {
   calcularDiasUteis,
   calcularMetaAtividade,
   calcularStatusMeta,
-  type StatusMeta,
 } from "@/lib/metricas";
-import type { Tom } from "@/lib/design-tokens";
+import { STATUS_META_FILL, STATUS_META_TOM } from "@/lib/design-tokens";
+import { buscarRankingLateral } from "@/lib/rankingLateral";
 import type { EtapaLead } from "@prisma/client";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { StatCard } from "@/components/dashboard/StatCard";
@@ -19,6 +19,7 @@ import { AvatarUpload } from "@/components/dashboard/AvatarUpload";
 import { RankingVendedores } from "@/components/dashboard/RankingVendedores";
 import { PromocaoDoDiaCard } from "@/components/dashboard/PromocaoDoDiaCard";
 import { FraseMotivacionalMarquee } from "@/components/dashboard/FraseMotivacionalMarquee";
+import { GraficoLinhaDiaria } from "@/components/dashboard/GraficoLinhaDiaria";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { atualizarMinhaFoto } from "./actions";
 
@@ -61,6 +62,7 @@ export default async function VendedorHomePage() {
     vendasDoMesPorVendedor,
     promocaoHoje,
     atividadesHojeContagem,
+    rankingLateral,
   ] = await Promise.all([
     prisma.vendedor.findUnique({ where: { id: vendedorId }, include: { user: true } }),
     prisma.meta.findFirst({
@@ -121,6 +123,7 @@ export default async function VendedorHomePage() {
         tipo: { not: "OBSERVACAO" },
       },
     }),
+    buscarRankingLateral(hoje),
   ]);
 
   const meta = metaMensal?.valorMeta ?? 0;
@@ -132,7 +135,10 @@ export default async function VendedorHomePage() {
   const diasUteisMes = calcularDiasUteis(inicioMes, fimMes) || 1;
   const metaAtividadeHoje = Math.round(calcularMetaAtividade(meta) / diasUteisMes);
   const statusAtividadeHoje = calcularStatusMeta(atividadesHojeContagem, metaAtividadeHoje);
-  const TOM_POR_STATUS: Record<StatusMeta, Tom> = { verde: "sucesso", amarelo: "alerta", vermelho: "risco" };
+
+  const meuRanking = rankingLateral.find((r) => r.vendedorId === vendedorId);
+  const statusMeta = meuRanking?.vendas.mensal.status ?? "verde";
+  const serieSemana = meuRanking?.vendas.serieDiaria.slice(-7) ?? [];
 
   const contagemPorEtapa = new Map(leadsPorEtapa.map((g) => [g.etapa, g._count._all]));
 
@@ -178,6 +184,7 @@ export default async function VendedorHomePage() {
               espessura={16}
               label={`${progresso.realizado}/${progresso.meta || "—"}`}
               sublabel="vendas"
+              cor={STATUS_META_FILL[statusMeta]}
             />
             <p className="text-xs text-muted-foreground">
               {metaMensal ? "meta mensal" : "nenhuma meta definida"}
@@ -200,12 +207,21 @@ export default async function VendedorHomePage() {
         </Card>
       </section>
 
+      <Card className="border-border/80 shadow-sm">
+        <CardHeader>
+          <CardTitle className="text-sm text-foreground/80">Vendas da semana</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <GraficoLinhaDiaria serie={serieSemana} unidade="venda(s)" />
+        </CardContent>
+      </Card>
+
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatCard
           label="Atividade hoje"
           valor={`${atividadesHojeContagem}${metaAtividadeHoje > 0 ? `/${metaAtividadeHoje}` : ""}`}
           icon={Flame}
-          tom={TOM_POR_STATUS[statusAtividadeHoje]}
+          tom={STATUS_META_TOM[statusAtividadeHoje]}
           contexto="contatos de lead registrados hoje"
         />
         <StatCard

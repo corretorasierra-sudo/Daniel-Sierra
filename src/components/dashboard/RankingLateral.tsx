@@ -1,19 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
 import { cn } from "@/lib/utils";
-import { tomClasses, type Tom } from "@/lib/design-tokens";
-import type { StatusMeta } from "@/lib/metricas";
-import type { ItemRankingLateral, MetricaRanking, PontoSerieDiaria } from "@/lib/rankingLateral";
+import { tomClasses, STATUS_META_TOM } from "@/lib/design-tokens";
+import { GraficoLinhaDiaria } from "@/components/dashboard/GraficoLinhaDiaria";
+import type { ItemRankingLateral, MetricaRanking } from "@/lib/rankingLateral";
 
 type Periodo = "diario" | "semanal" | "mensal";
 
@@ -33,19 +24,6 @@ const METRICA_UNIDADE: Record<MetricaRanking, string> = {
   atividade: "contato(s)",
 };
 
-/** Mesmo esquema de cores (verde/amarelo/vermelho) usado em todo indicador do sistema. */
-const STATUS_TOM: Record<StatusMeta, Tom> = {
-  verde: "sucesso",
-  amarelo: "alerta",
-  vermelho: "risco",
-};
-
-const STATUS_FILL: Record<StatusMeta, string> = {
-  verde: "var(--chart-1)",
-  amarelo: "var(--chart-4)",
-  vermelho: "#ef4444",
-};
-
 function iniciaisDe(nome: string) {
   return nome
     .split(" ")
@@ -53,57 +31,6 @@ function iniciaisDe(nome: string) {
     .slice(0, 2)
     .map((parte) => parte[0]?.toUpperCase())
     .join("");
-}
-
-function DotStatus(props: { cx?: number; cy?: number; payload?: PontoSerieDiaria }) {
-  const { cx, cy, payload } = props;
-  if (cx == null || cy == null || !payload) return null;
-  return (
-    <circle cx={cx} cy={cy} r={7} fill={STATUS_FILL[payload.status]} stroke="var(--card)" strokeWidth={2} />
-  );
-}
-
-function GraficoVendedor({ serie, unidade }: { serie: PontoSerieDiaria[]; unidade: string }) {
-  if (serie.length === 0) {
-    return (
-      <p className="px-1 py-4 text-center text-xs text-muted-foreground">
-        Sem dados no período pra mostrar no gráfico.
-      </p>
-    );
-  }
-
-  return (
-    <ResponsiveContainer width="100%" height={160}>
-      <LineChart data={serie} margin={{ top: 8, right: 16, left: -20, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
-        <XAxis
-          dataKey="label"
-          tick={{ fontSize: 10, fill: "var(--muted-foreground)" }}
-          axisLine={false}
-          tickLine={false}
-        />
-        <YAxis
-          allowDecimals={false}
-          tick={{ fontSize: 10, fill: "var(--muted-foreground)" }}
-          axisLine={false}
-          tickLine={false}
-          width={24}
-        />
-        <Tooltip
-          contentStyle={{ borderRadius: 8, borderColor: "var(--border)", fontSize: 12 }}
-          formatter={(value) => [`${value} ${unidade}`, ""]}
-        />
-        <Line
-          type="monotone"
-          dataKey="valor"
-          stroke="var(--foreground)"
-          strokeWidth={3}
-          dot={<DotStatus />}
-          activeDot={{ r: 8 }}
-        />
-      </LineChart>
-    </ResponsiveContainer>
-  );
 }
 
 /**
@@ -198,7 +125,7 @@ export function RankingLateral({ itens }: { itens: ItemRankingLateral[] }) {
               >
                 <span className="w-4 shrink-0 text-center text-xs text-muted-foreground">{index + 1}</span>
                 <span
-                  className={cn("size-2.5 shrink-0 rounded-full", tomClasses(STATUS_TOM[dados.status]).dot)}
+                  className={cn("size-2.5 shrink-0 rounded-full", tomClasses(STATUS_META_TOM[dados.status]).dot)}
                   title={`Status: ${dados.status}`}
                 />
                 <div className="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted text-[10px] font-semibold text-muted-foreground">
@@ -221,7 +148,7 @@ export function RankingLateral({ itens }: { itens: ItemRankingLateral[] }) {
                   <p className="mb-1 px-1 text-xs font-medium text-muted-foreground">
                     {item.nome} — {METRICA_LABEL[metrica].toLowerCase()} por dia
                   </p>
-                  <GraficoVendedor serie={serieDoPeriodo(item)} unidade={METRICA_UNIDADE[metrica]} />
+                  <GraficoLinhaDiaria serie={serieDoPeriodo(item)} unidade={METRICA_UNIDADE[metrica]} />
                 </div>
               )}
             </li>
