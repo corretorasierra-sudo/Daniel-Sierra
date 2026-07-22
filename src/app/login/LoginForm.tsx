@@ -18,7 +18,7 @@ type DadosLogin = {
 
 const iconsArray: OrbitIcon[] = [
   {
-    component: () => <OrbitLogo src="/logo-cartao-de-todos.png" alt="Cartão de Todos" className="size-[46px]" padding="p-1" />,
+    component: () => <OrbitLogo src="/icone-carro.png" alt="Realize o sonho do carro" className="size-[46px]" padding="p-1.5" />,
     className: "border-none bg-transparent shadow-none",
     duration: 18,
     delay: 0,
@@ -29,7 +29,15 @@ const iconsArray: OrbitIcon[] = [
     component: () => <OrbitLogo src="/icone-whatsapp.avif" alt="WhatsApp" className="size-[46px]" padding="p-1.5" />,
     className: "border-none bg-transparent shadow-none",
     duration: 18,
-    delay: 9,
+    delay: 6,
+    radius: 90,
+    reverse: false,
+  },
+  {
+    component: () => <OrbitLogo src="/icone-casa.png" alt="Realize o sonho da casa própria" className="size-[46px]" padding="p-1.5" />,
+    className: "border-none bg-transparent shadow-none",
+    duration: 18,
+    delay: 12,
     radius: 90,
     reverse: false,
   },
