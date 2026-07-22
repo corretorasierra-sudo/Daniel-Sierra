@@ -80,6 +80,45 @@ export function calcularProjecaoFechamento(
   return Math.round(ritmoDiario * diasUteisTotais * 100) / 100;
 }
 
+export type StatusMeta = "verde" | "amarelo" | "vermelho";
+
+/**
+ * Classifica desempenho num período com uma régua única, usada em todo
+ * indicador e ranking do sistema (mensal, semanal, diário e gráfico
+ * individual): verde = no ritmo (ou já bateu) pra atingir a meta, amarelo =
+ * abaixo do ritmo esperado, vermelho = longe de bater — inclusive quando não
+ * vendeu nada no período. Pra ranking de período, `referencia` deve ser a
+ * projeção de fechamento (não o realizado bruto), pra refletir probabilidade
+ * de bater a meta e não só o placar até agora; pro dia isolado (ex: bolinha
+ * do gráfico), `referencia` é o próprio realizado do dia.
+ */
+export function calcularStatusMeta(referencia: number, meta: number): StatusMeta {
+  if (referencia <= 0) return "vermelho";
+  if (meta <= 0) return "verde";
+  const percentual = (referencia / meta) * 100;
+  if (percentual >= 100) return "verde";
+  if (percentual >= 50) return "amarelo";
+  return "vermelho";
+}
+
+/** Segunda-feira da semana de `data` (semana seg-sáb, domingo é folga padrão). */
+export function calcularInicioSemana(data: Date): Date {
+  const d = new Date(data);
+  d.setHours(0, 0, 0, 0);
+  const diaDaSemana = d.getDay(); // 0 = domingo
+  const diff = diaDaSemana === 0 ? -6 : 1 - diaDaSemana;
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+
+/** Sábado da semana que começa em `inicioSemana`. */
+export function calcularFimSemana(inicioSemana: Date): Date {
+  const d = new Date(inicioSemana);
+  d.setDate(d.getDate() + 5);
+  d.setHours(23, 59, 59, 999);
+  return d;
+}
+
 export type ItemRanking = {
   vendedorId: string;
   nome: string;

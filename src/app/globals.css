@@ -60,7 +60,7 @@ body {
   --card-foreground: #0f172a;
   --popover: #ffffff;
   --popover-foreground: #0f172a;
-  --primary: #84cc16;
+  --primary: #aff33e;
   --primary-foreground: #0b3733;
   --secondary: #f1f5f9;
   --secondary-foreground: #0f172a;
@@ -71,31 +71,32 @@ body {
   --destructive: oklch(0.577 0.245 27.325);
   --border: #e2e8f0;
   --input: #e2e8f0;
-  --ring: #84cc16;
-  --chart-1: #84cc16;
+  --ring: #aff33e;
+  --chart-1: #aff33e;
   --chart-2: #0f3d3d;
   --chart-3: #38bdf8;
   --chart-4: #f59e0b;
   --chart-5: #94a3b8;
-  --radius: 0.75rem;
+  --radius: 1rem;
   --sidebar: #0b2e2c;
   --sidebar-foreground: #f0fdf4;
-  --sidebar-primary: #84cc16;
+  --sidebar-primary: #aff33e;
   --sidebar-primary-foreground: #0b3733;
   --sidebar-accent: #123f3b;
   --sidebar-accent-foreground: #f0fdf4;
   --sidebar-border: #123f3b;
-  --sidebar-ring: #84cc16;
+  --sidebar-ring: #aff33e;
 }
 
+/* Tema "Geada de cal" — fundo quase preto, cartões em slate-900, aceso lima. */
 .dark {
-  --background: #0f172a;
+  --background: #020617;
   --foreground: #f8fafc;
-  --card: #16213a;
+  --card: #0f172a;
   --card-foreground: #f8fafc;
-  --popover: #16213a;
+  --popover: #0f172a;
   --popover-foreground: #f8fafc;
-  --primary: #a3e635;
+  --primary: #aff33e;
   --primary-foreground: #0b3733;
   --secondary: #1e293b;
   --secondary-foreground: #f8fafc;
@@ -103,23 +104,23 @@ body {
   --muted-foreground: #94a3b8;
   --accent: #14532d;
   --accent-foreground: #ecfccb;
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --destructive: #991b1b;
+  --border: #1e293b;
   --input: oklch(1 0 0 / 15%);
-  --ring: #a3e635;
-  --chart-1: #a3e635;
+  --ring: #aff33e;
+  --chart-1: #aff33e;
   --chart-2: #2dd4bf;
   --chart-3: #38bdf8;
   --chart-4: #f59e0b;
   --chart-5: #94a3b8;
-  --sidebar: #08211f;
+  --sidebar: #020617;
   --sidebar-foreground: #f0fdf4;
-  --sidebar-primary: #a3e635;
+  --sidebar-primary: #aff33e;
   --sidebar-primary-foreground: #0b3733;
-  --sidebar-accent: #123f3b;
+  --sidebar-accent: #14532d;
   --sidebar-accent-foreground: #f0fdf4;
-  --sidebar-border: #123f3b;
-  --sidebar-ring: #a3e635;
+  --sidebar-border: #1e293b;
+  --sidebar-ring: #aff33e;
 }
 
 @layer base {

@@ -1,4 +1,4 @@
-import { Target, TrendingUp, Users, AlertOctagon, Gauge, Clock } from "lucide-react";
+import { Target, TrendingUp, Users, AlertOctagon, Gauge, Clock, Trophy } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import {
   calcularProgressoMeta,
@@ -6,20 +6,13 @@ import {
   calcularRanking,
 } from "@/lib/metricas";
 import { buscarPendenciasPosVenda } from "@/lib/posVenda";
+import { buscarRankingLateral } from "@/lib/rankingLateral";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { ProgressRing } from "@/components/dashboard/ProgressRing";
-import { RankingBarChart } from "@/components/dashboard/RankingBarChart";
+import { RankingLateral } from "@/components/dashboard/RankingLateral";
 import { PosVendaPendenciasTable } from "@/components/dashboard/PosVendaPendenciasTable";
 import { AlertaCard } from "@/components/dashboard/AlertaCard";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const DIAS_LEAD_PARADO = 7;
@@ -41,7 +34,7 @@ export default async function GerenteHomePage() {
   const fimPeriodo =
     metaUnidade?.dataFim ?? new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
 
-  const [vendedores, vendasNoPeriodo, metasVendedores, leadsParados, pendenciasPosVenda] = await Promise.all([
+  const [vendedores, vendasNoPeriodo, metasVendedores, leadsParados, pendenciasPosVenda, rankingLateral] = await Promise.all([
     prisma.vendedor.findMany({ where: { ativo: true, virtual: false } }),
     prisma.venda.findMany({
       where: {
@@ -75,6 +68,7 @@ export default async function GerenteHomePage() {
       take: 10,
     }),
     buscarPendenciasPosVenda(),
+    buscarRankingLateral(hoje),
   ]);
 
   const totalRealizado = vendasNoPeriodo.length;
@@ -106,6 +100,8 @@ export default async function GerenteHomePage() {
         subtitulo={`Período: ${new Intl.DateTimeFormat("pt-BR").format(inicioPeriodo)} – ${new Intl.DateTimeFormat("pt-BR").format(fimPeriodo)}`}
       />
 
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px] lg:items-start">
+      <div className="flex flex-col gap-6">
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-4">
         <Card className="border-border/80 shadow-sm lg:col-span-1">
           <CardHeader>
@@ -147,44 +143,6 @@ export default async function GerenteHomePage() {
           />
         </div>
       </section>
-
-      <Card className="border-border/80 shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-sm text-foreground/80">Ranking do mês</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-6">
-          <RankingBarChart
-            dados={ranking.map((r) => ({
-              nome: r.nome,
-              realizado: r.realizado,
-              meta: r.meta,
-              percentual: r.percentual,
-            }))}
-          />
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>#</TableHead>
-                <TableHead>Vendedor</TableHead>
-                <TableHead>Realizado</TableHead>
-                <TableHead>Meta</TableHead>
-                <TableHead>%</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {ranking.map((r) => (
-                <TableRow key={r.vendedorId}>
-                  <TableCell>{r.posicao}</TableCell>
-                  <TableCell className="font-medium text-foreground">{r.nome}</TableCell>
-                  <TableCell>{r.realizado}</TableCell>
-                  <TableCell>{r.meta || "—"}</TableCell>
-                  <TableCell>{r.meta > 0 ? `${r.percentual.toFixed(0)}%` : "—"}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <AlertaCard titulo="Alertas — sem venda no período" icon={AlertOctagon} tom="risco">
@@ -246,6 +204,22 @@ export default async function GerenteHomePage() {
           <PosVendaPendenciasTable itens={pendenciasPosVenda} />
         </CardContent>
       </Card>
+      </div>
+
+      <aside className="lg:sticky lg:top-6">
+        <Card className="border-border/80 shadow-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-sm text-foreground/80">
+              <Trophy className="size-4 text-muted-foreground" />
+              Ranking de vendas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RankingLateral itens={rankingLateral} />
+          </CardContent>
+        </Card>
+      </aside>
+      </div>
     </div>
   );
 }
