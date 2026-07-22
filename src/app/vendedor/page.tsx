@@ -18,6 +18,7 @@ import { ProgressRing } from "@/components/dashboard/ProgressRing";
 import { AvatarUpload } from "@/components/dashboard/AvatarUpload";
 import { RankingVendedores } from "@/components/dashboard/RankingVendedores";
 import { PromocaoDoDiaCard } from "@/components/dashboard/PromocaoDoDiaCard";
+import { FraseMotivacionalMarquee } from "@/components/dashboard/FraseMotivacionalMarquee";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { atualizarMinhaFoto } from "./actions";
 
@@ -160,6 +161,8 @@ export default async function VendedorHomePage() {
           />
         }
       />
+
+      <FraseMotivacionalMarquee />
 
       {promocaoHoje && <PromocaoDoDiaCard texto={promocaoHoje.texto} />}
 
