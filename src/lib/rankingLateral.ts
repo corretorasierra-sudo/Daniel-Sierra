@@ -141,7 +141,7 @@ export async function buscarRankingLateral(hoje: Date = new Date()): Promise<Ite
   const diasUteisMes = calcularDiasUteis(inicioMes, fimMes) || 1;
   const diasUteisSemana = calcularDiasUteis(inicioSemana, fimSemana) || 1;
 
-  const [vendedores, vendasDoMes, atividadesDoMes, metasMensais] = await Promise.all([
+  const [vendedores, vendasDoMes, atividadesDoMes, leadsCriadosDoMes, metasMensais] = await Promise.all([
     prisma.vendedor.findMany({
       where: { ativo: true, virtual: false },
       include: { user: { select: { fotoUrl: true } } },
@@ -162,6 +162,16 @@ export async function buscarRankingLateral(hoje: Date = new Date()): Promise<Ite
       },
       select: { vendedorId: true, dataHora: true },
     }),
+    // Cadastrar um lead novo já conta como atividade — é o primeiro passo de
+    // trabalhar um lead frio, não só as ligações/contatos feitos depois.
+    prisma.lead.findMany({
+      where: {
+        dataEntrada: { gte: inicioMes, lte: fimMes },
+        vendedorId: { not: null },
+        vendedor: { virtual: false },
+      },
+      select: { vendedorId: true, dataEntrada: true },
+    }),
     prisma.meta.findMany({
       where: {
         tipo: "MENSAL",
@@ -175,6 +185,20 @@ export async function buscarRankingLateral(hoje: Date = new Date()): Promise<Ite
   const metaMensalPorVendedor = new Map(metasMensais.map((m) => [m.vendedorId as string, m.valorMeta]));
   const vendasPorVendedorDia = agruparPorVendedorEDia(vendasDoMes, (v) => v.dataVenda);
   const atividadesPorVendedorDia = agruparPorVendedorEDia(atividadesDoMes, (a) => a.dataHora);
+  const leadsPorVendedorDia = agruparPorVendedorEDia(
+    leadsCriadosDoMes as { vendedorId: string; dataEntrada: Date }[],
+    (l) => l.dataEntrada
+  );
+  for (const [vendedorId, porDia] of leadsPorVendedorDia) {
+    let acumulado = atividadesPorVendedorDia.get(vendedorId);
+    if (!acumulado) {
+      acumulado = new Map();
+      atividadesPorVendedorDia.set(vendedorId, acumulado);
+    }
+    for (const [dia, contagem] of porDia) {
+      acumulado.set(dia, (acumulado.get(dia) ?? 0) + contagem);
+    }
+  }
 
   return vendedores.map((vendedor) => {
     const metaVendasMensal = metaMensalPorVendedor.get(vendedor.id) ?? 0;

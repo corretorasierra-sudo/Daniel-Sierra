@@ -151,6 +151,47 @@ export async function atualizarObservacaoLead(leadId: string, observacoes: strin
   revalidatePath("/vendedor/leads");
 }
 
+const atualizarCampoLeadSchema = z.object({
+  leadId: z.string().min(1),
+  campo: z.enum(["nome", "telefone", "cidade"]),
+  valor: z.string(),
+});
+
+/** Edição inline de nome/telefone/cidade — mesmo padrão da célula de observação. */
+export async function atualizarCampoLead(
+  leadId: string,
+  campo: "nome" | "telefone" | "cidade",
+  valor: string
+): Promise<{ erro?: string; ok?: boolean }> {
+  const session = await exigirVendedor();
+  const dados = atualizarCampoLeadSchema.parse({ leadId, campo, valor });
+
+  const lead = await prisma.lead.findUniqueOrThrow({ where: { id: dados.leadId } });
+
+  if (session.user.role === "VENDEDOR" && lead.vendedorId !== session.user.vendedorId) {
+    throw new Error("Você não pode editar um lead de outro vendedor.");
+  }
+
+  if (dados.campo === "nome") {
+    const nome = dados.valor.trim();
+    if (!nome) return { erro: "Nome não pode ficar em branco." };
+    await prisma.lead.update({ where: { id: lead.id }, data: { nome } });
+  } else if (dados.campo === "telefone") {
+    const telefone = dados.valor.replace(/\D/g, "");
+    if (!telefone) return { erro: "Telefone inválido." };
+    if (telefone !== lead.telefone) {
+      const jaExiste = await prisma.lead.findUnique({ where: { telefone } });
+      if (jaExiste) return { erro: "Já existe um lead com esse telefone." };
+    }
+    await prisma.lead.update({ where: { id: lead.id }, data: { telefone } });
+  } else {
+    await prisma.lead.update({ where: { id: lead.id }, data: { cidade: dados.valor.trim() || null } });
+  }
+
+  revalidatePath("/vendedor/leads");
+  return { ok: true };
+}
+
 const criarLeadSchema = z.object({
   nome: z.string().min(1),
   telefone: z.string().min(1),

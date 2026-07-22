@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { moverEtapaLead, atualizarObservacaoLead, criarLead } from "./actions";
+import { moverEtapaLead, atualizarObservacaoLead, atualizarCampoLead, criarLead } from "./actions";
 import {
   Table,
   TableBody,
@@ -82,6 +82,7 @@ export function LeadsTable({ leads }: { leads: LeadResumo[] }) {
   const [rascunhos, setRascunhos] = useState<Rascunho[]>(() =>
     Array.from({ length: LINHAS_EM_BRANCO }, rascunhoVazio)
   );
+  const [errosCampo, setErrosCampo] = useState<Record<string, string>>({});
   const [, startTransition] = useTransition();
 
   // Recebe leads atualizados depois de revalidatePath (etapa/observação mudada,
@@ -110,6 +111,30 @@ export function LeadsTable({ leads }: { leads: LeadResumo[] }) {
   function salvarObservacao(leadId: string, observacoes: string) {
     startTransition(() => {
       atualizarObservacaoLead(leadId, observacoes);
+    });
+  }
+
+  function chaveErro(leadId: string, campo: string) {
+    return `${leadId}:${campo}`;
+  }
+
+  function mudarCampoLead(leadId: string, campo: "nome" | "telefone" | "cidade", valor: string) {
+    setLeadsState((atual) =>
+      atual.map((lead) => (lead.id === leadId ? { ...lead, [campo]: valor } : lead))
+    );
+  }
+
+  async function salvarCampoLead(leadId: string, campo: "nome" | "telefone" | "cidade", valor: string) {
+    const resultado = await atualizarCampoLead(leadId, campo, valor);
+    const chave = chaveErro(leadId, campo);
+    setErrosCampo((atual) => {
+      const proximo = { ...atual };
+      if (resultado?.erro) {
+        proximo[chave] = resultado.erro;
+      } else {
+        delete proximo[chave];
+      }
+      return proximo;
     });
   }
 
@@ -164,12 +189,36 @@ export function LeadsTable({ leads }: { leads: LeadResumo[] }) {
               <TableCell className="text-muted-foreground">
                 {formatarData(lead.dataEntrada)}
               </TableCell>
-              <TableCell className="truncate font-medium text-foreground" title={lead.nome}>
-                {lead.nome}
+              <TableCell>
+                <input
+                  defaultValue={lead.nome}
+                  onChange={(e) => mudarCampoLead(lead.id, "nome", e.target.value)}
+                  onBlur={(e) => salvarCampoLead(lead.id, "nome", e.target.value)}
+                  className={`${inputCelulaClasse} font-medium text-foreground`}
+                />
+                {errosCampo[chaveErro(lead.id, "nome")] && (
+                  <p className="mt-0.5 text-xs text-red-500">{errosCampo[chaveErro(lead.id, "nome")]}</p>
+                )}
               </TableCell>
-              <TableCell className="text-muted-foreground">{lead.telefone}</TableCell>
-              <TableCell className="truncate text-muted-foreground" title={lead.cidade ?? ""}>
-                {lead.cidade ?? "—"}
+              <TableCell>
+                <input
+                  defaultValue={lead.telefone}
+                  onChange={(e) => mudarCampoLead(lead.id, "telefone", e.target.value)}
+                  onBlur={(e) => salvarCampoLead(lead.id, "telefone", e.target.value)}
+                  className={inputCelulaClasse}
+                />
+                {errosCampo[chaveErro(lead.id, "telefone")] && (
+                  <p className="mt-0.5 text-xs text-red-500">{errosCampo[chaveErro(lead.id, "telefone")]}</p>
+                )}
+              </TableCell>
+              <TableCell>
+                <input
+                  defaultValue={lead.cidade ?? ""}
+                  placeholder="Cidade"
+                  onChange={(e) => mudarCampoLead(lead.id, "cidade", e.target.value)}
+                  onBlur={(e) => salvarCampoLead(lead.id, "cidade", e.target.value)}
+                  className={inputCelulaClasse}
+                />
               </TableCell>
               <TableCell className="whitespace-normal">
                 <select
@@ -197,7 +246,17 @@ export function LeadsTable({ leads }: { leads: LeadResumo[] }) {
           ))}
 
           {rascunhos.map((rascunho, index) => (
-            <TableRow key={`rascunho-${index}`}>
+            <TableRow
+              key={`rascunho-${index}`}
+              onBlur={(e) => {
+                // Só salva quando o foco sai da linha inteira — senão o lead
+                // era criado (e a linha limpa) ao tabular de Telefone pra
+                // Cidade, antes da cidade ser digitada.
+                if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+                  salvarRascunhoSeCompleto(index);
+                }
+              }}
+            >
               <TableCell className="text-muted-foreground">—</TableCell>
               <TableCell>
                 <input
@@ -205,7 +264,6 @@ export function LeadsTable({ leads }: { leads: LeadResumo[] }) {
                   placeholder="Nome"
                   disabled={rascunho.salvando}
                   onChange={(e) => mudarRascunho(index, "nome", e.target.value)}
-                  onBlur={() => salvarRascunhoSeCompleto(index)}
                   className={inputCelulaClasse}
                 />
               </TableCell>
@@ -215,7 +273,6 @@ export function LeadsTable({ leads }: { leads: LeadResumo[] }) {
                   placeholder="Número"
                   disabled={rascunho.salvando}
                   onChange={(e) => mudarRascunho(index, "telefone", e.target.value)}
-                  onBlur={() => salvarRascunhoSeCompleto(index)}
                   className={inputCelulaClasse}
                 />
               </TableCell>
@@ -225,7 +282,6 @@ export function LeadsTable({ leads }: { leads: LeadResumo[] }) {
                   placeholder="Cidade"
                   disabled={rascunho.salvando}
                   onChange={(e) => mudarRascunho(index, "cidade", e.target.value)}
-                  onBlur={() => salvarRascunhoSeCompleto(index)}
                   className={inputCelulaClasse}
                 />
               </TableCell>
@@ -238,7 +294,6 @@ export function LeadsTable({ leads }: { leads: LeadResumo[] }) {
                   placeholder="Observação..."
                   disabled={rascunho.salvando}
                   onChange={(e) => mudarRascunho(index, "observacoes", e.target.value)}
-                  onBlur={() => salvarRascunhoSeCompleto(index)}
                   className={inputCelulaClasse}
                 />
                 {rascunho.erro && <p className="mt-0.5 text-xs text-red-500">{rascunho.erro}</p>}

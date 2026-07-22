@@ -2,13 +2,7 @@ import Link from "next/link";
 import { CalendarClock, HeartHandshake, ArrowRight, Flame } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import {
-  calcularProgressoMeta,
-  calcularMediaNecessariaPorDia,
-  calcularDiasUteis,
-  calcularMetaAtividade,
-  calcularStatusMeta,
-} from "@/lib/metricas";
+import { calcularProgressoMeta, calcularMediaNecessariaPorDia } from "@/lib/metricas";
 import { STATUS_META_FILL, STATUS_META_TOM } from "@/lib/design-tokens";
 import { buscarRankingLateral } from "@/lib/rankingLateral";
 import type { EtapaLead } from "@prisma/client";
@@ -61,7 +55,6 @@ export default async function VendedorHomePage() {
     vendedoresAtivos,
     vendasDoMesPorVendedor,
     promocaoHoje,
-    atividadesHojeContagem,
     rankingLateral,
   ] = await Promise.all([
     prisma.vendedor.findUnique({ where: { id: vendedorId }, include: { user: true } }),
@@ -116,13 +109,6 @@ export default async function VendedorHomePage() {
       _count: { _all: true },
     }),
     prisma.promocaoDia.findUnique({ where: { diaSemana: hoje.getDay() } }),
-    prisma.atividade.count({
-      where: {
-        vendedorId,
-        dataHora: { gte: inicioHoje, lt: fimHoje },
-        tipo: { not: "OBSERVACAO" },
-      },
-    }),
     buscarRankingLateral(hoje),
   ]);
 
@@ -132,13 +118,13 @@ export default async function VendedorHomePage() {
     ? calcularMediaNecessariaPorDia(meta, vendasNoPeriodo, metaMensal.dataFim, hoje)
     : 0;
 
-  const diasUteisMes = calcularDiasUteis(inicioMes, fimMes) || 1;
-  const metaAtividadeHoje = Math.round(calcularMetaAtividade(meta) / diasUteisMes);
-  const statusAtividadeHoje = calcularStatusMeta(atividadesHojeContagem, metaAtividadeHoje);
-
   const meuRanking = rankingLateral.find((r) => r.vendedorId === vendedorId);
   const statusMeta = meuRanking?.vendas.mensal.status ?? "verde";
   const serieSemana = meuRanking?.vendas.serieDiaria.slice(-7) ?? [];
+
+  const atividadesHojeContagem = meuRanking?.atividade.diario.realizado ?? 0;
+  const metaAtividadeHoje = Math.round(meuRanking?.atividade.diario.meta ?? 0);
+  const statusAtividadeHoje = meuRanking?.atividade.diario.status ?? "vermelho";
 
   const contagemPorEtapa = new Map(leadsPorEtapa.map((g) => [g.etapa, g._count._all]));
 
